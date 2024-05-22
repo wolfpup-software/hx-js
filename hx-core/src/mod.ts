@@ -39,8 +39,7 @@ class HxCore implements HxCoreImpl {
     }
 
     onAnchor(e: Event) {
-        if (!(e.currentTarget instanceof Node)) return;
-        if (!(e.target instanceof HTMLElement)) return;
+        if (!(e.currentTarget instanceof Node && e.target instanceof HTMLElement)) return;
 
         let node: HTMLElement | null = e.target;
         while (node && node !== e.currentTarget) {
@@ -58,9 +57,7 @@ class HxCore implements HxCoreImpl {
     }
 
     onSubmit(e: Event) {
-        if (!(e instanceof SubmitEvent)) return;
-        if (!(e.currentTarget instanceof Node)) return;
-        if (!(e.target instanceof HTMLFormElement)) return;
+        if (!(e instanceof SubmitEvent && e.currentTarget instanceof Node && e.target instanceof HTMLElement)) return;
 
         const hx = e.target.getAttribute("hx");
         if (!hx || hx !== "") return;
