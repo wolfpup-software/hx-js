@@ -5,38 +5,41 @@
 // should be included as an attribute
 // on the element making the hypermedia request.
 
-interface ElementWithEvents {
-    addEventListener: HTMLElement["addEventListener"];
-    removeEventListener: HTMLElement["removeEventListener"];
+interface CallbacksImpl {
+    requestHypermedia(
+        root: Node,
+        el: HTMLElement,
+    );
 }
 
-interface Callbacks {
-    requestHypermedia(root: HTMLElement, el: HTMLElement);
+interface HxCoreImpl {
+    connect(root: Node);
+    disconnect(root: Node);
 }
 
-class HxCore {
-    #callbacks: Callbacks;
+class HxCore implements HxCoreImpl {
+    #callbacks: CallbacksImpl;
 
-    constructor(callbacks: Callbacks) {
+    constructor(callbacks: CallbacksImpl) {
         this.#callbacks = callbacks;
         this.onAnchor = this.onAnchor.bind(this)
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    connect(root: ElementWithEvents) {
+    connect(root: Node) {
         root.addEventListener("pointerup", this.onAnchor);
         root.addEventListener("keydown", this.onAnchor);
         root.addEventListener("submit", this.onSubmit);
     }
 
-    disconnect(root: ElementWithEvents) {
+    disconnect(root: Node) {
         root.removeEventListener("pointerup", this.onAnchor);
         root.removeEventListener("keydown", this.onAnchor);
         root.removeEventListener("submit", this.onSubmit);
     }
 
     onAnchor(e: Event) {
-        if (!(e.currentTarget instanceof HTMLElement)) return;
+        if (!(e.currentTarget instanceof Node)) return;
         if (!(e.target instanceof HTMLElement)) return;
 
         let node: HTMLElement | null = e.target;
@@ -56,7 +59,7 @@ class HxCore {
 
     onSubmit(e: Event) {
         if (!(e instanceof SubmitEvent)) return;
-        if (!(e.currentTarget instanceof HTMLElement)) return;
+        if (!(e.currentTarget instanceof Node)) return;
         if (!(e.target instanceof HTMLFormElement)) return;
 
         const hx = e.target.getAttribute("hx");
@@ -67,6 +70,6 @@ class HxCore {
     }
 }
 
-export type { Callbacks, ElementWithEvents }
+export type { HxCoreImpl, CallbacksImpl }
 
 export { HxCore }
