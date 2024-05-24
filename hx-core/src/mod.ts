@@ -1,11 +1,11 @@
+interface HxFormEventImpl extends Event {
+    submitter: HTMLElement | null
+}
+
 class HxAnchorEvent extends Event {
     constructor() {
         super("hx-anchor", { composed: true, bubbles: true });
     }
-}
-
-interface HxFormEventImpl extends Event {
-    submitter: HTMLElement | null
 }
 
 class HxFormEvent extends Event implements HxFormEventImpl {

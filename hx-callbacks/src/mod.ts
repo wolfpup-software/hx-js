@@ -1,37 +1,43 @@
-interface CallbacksImpl {
-    onAnchor(e: Event);
-    onSubmit(e: CustomEvent<HTMLElement | null>);
+// two stack queue
+class Queue<T> {
+    #enq: T[] = [];
+    #deq: T[] = [];
+
+    enqueue(e: T) {
+        this.#enq.push(e);
+    }
+
+    dequeue(): T | undefined {
+        if (!this.#deq.length) {
+            let r;
+            while (r = this.#enq.pop()) {
+                this.#deq.push(r);
+            }
+        }
+
+        return this.#deq.pop();
+    }
 }
 
-// might not be neccessary?
-class Callbacks implements CallbacksImpl {
-    constructor() {
-        this.onAnchor = this.onAnchor.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-    }
-    onAnchor(e: Event) {}
-    onSubmit(e: CustomEvent<HTMLElement | null>) {}
-}
+class TaskQueue<T> {
+    #queue = new Queue<T>();
+    #task: T | undefined;
 
-class MessageQueue {
-    pushQueue: unknown[] = [];
-    popQueue: unknown[] = [];
-    currTask: unknown = {};
+    constructor() {}
 
-    constructor() {
-        this.processRequest = this.processRequest.bind(this);
+    push(e: T) {
+        this.#queue.enqueue(e);
+        if (this.#task) return;
+        this.#processNextRequest();
     }
 
-    push(e: unknown) {
-        this.pushQueue.push(e);
-        // kickoff queue!
-        //
-        // pop push queue into popQueue
-        // pass request to 
-    }
+    async #processNextRequest() {
+        // base case, there are no more tasks
+        this.#task = this.#queue.dequeue();
+        if (!this.#task) return;
 
-    async processRequest() {
-        // while pop push queue to pop queue
-        // pop off pop queue
+        // could be errors
+        await this.#task;
+        this.#processNextRequest();
     }
 }
