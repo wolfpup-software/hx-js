@@ -41,14 +41,6 @@ hx-placement
     replace -> replace element
 ```
 
-## External resources
-
-A response header `hx-resources` contains a list or urls (or none). This will trigger an asyncronous fetch of any external resources like web components, styles, etc.
-
-```
-hx-resources: "uwu.com/components/button.js;..."
-```
-
 ## License
 
 `Hx-js` is released under the BSD 3-Clause License

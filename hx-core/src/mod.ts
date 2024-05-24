@@ -1,13 +1,17 @@
 class HxAnchorEvent extends Event {
     constructor() {
-        super("hx-anchor", {composed: true, bubbles: true});
+        super("hx-anchor", { composed: true, bubbles: true });
     }
 }
 
-class HxFormEvent extends Event {
+interface HxFormEventImpl extends Event {
+    submitter: HTMLElement | null
+}
+
+class HxFormEvent extends Event implements HxFormEventImpl {
     submitter;
     constructor(submitter: HTMLElement | null) {
-        super("hx-form", {composed: true, bubbles: true});
+        super("hx-form", { composed: true, bubbles: true });
         this.submitter = submitter;
     }
 }
@@ -40,4 +44,5 @@ function onSubmit(e: Event) {
     e.target.dispatchEvent(new HxFormEvent(e.submitter));
 }
 
+export type { HxFormEventImpl };
 export { onAnchor, onSubmit, HxAnchorEvent, HxFormEvent }
