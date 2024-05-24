@@ -1,13 +1,18 @@
-// two stack queue
-class Queue<T> {
+// two stack task queue
+class TaskQueue<T> {
     #enq: T[] = [];
     #deq: T[] = [];
+    #task: T | undefined;
+
+    constructor() {}
 
     enqueue(e: T) {
         this.#enq.push(e);
+        if (this.#task) return;
+        this.#processNextRequest();
     }
 
-    dequeue(): T | undefined {
+    async #processNextRequest() {
         if (!this.#deq.length) {
             let r;
             while (r = this.#enq.pop()) {
@@ -15,25 +20,8 @@ class Queue<T> {
             }
         }
 
-        return this.#deq.pop();
-    }
-}
-
-class TaskQueue<T> {
-    #queue = new Queue<T>();
-    #task: T | undefined;
-
-    constructor() {}
-
-    push(e: T) {
-        this.#queue.enqueue(e);
-        if (this.#task) return;
-        this.#processNextRequest();
-    }
-
-    async #processNextRequest() {
         // base case, there are no more tasks
-        this.#task = this.#queue.dequeue();
+        this.#task = this.#deq.pop();
         if (!this.#task) return;
 
         // could be errors
