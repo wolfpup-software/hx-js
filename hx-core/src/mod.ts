@@ -17,7 +17,7 @@ class HxFormEvent extends Event implements HxFormEventImpl {
 }
 
 function onAnchor(e: Event) {
-    if (!(e.currentTarget instanceof Node && e.target instanceof HTMLElement)) return;
+    if (!(e.target instanceof HTMLElement)) return;
 
     let node: HTMLElement | null = e.target;
     while (node && node !== e.currentTarget) {
@@ -35,7 +35,7 @@ function onAnchor(e: Event) {
 }
 
 function onSubmit(e: Event) {
-    if (!(e instanceof SubmitEvent && e.target instanceof HTMLFormElement && e.currentTarget instanceof Node)) return;
+    if (!(e instanceof SubmitEvent && e.target instanceof HTMLFormElement)) return;
 
     const hx = e.target.getAttribute("hx-placement");
     if (!hx || hx !== "") return;
