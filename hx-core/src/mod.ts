@@ -1,23 +1,15 @@
-function connect(root: Node, callback: EventListenerOrEventListenerObject) {
-    root.addEventListener("pointerup", onAnchor);
-    root.addEventListener("keydown", onAnchor);
-    root.addEventListener("submit", onSubmit);
+class HxAnchorEvent extends Event {
+    constructor() {
+        super("hx-anchor", {composed: true, bubbles: true});
+    }
 }
 
-function disconnect(root: Node, callback: EventListenerOrEventListenerObject) {
-    root.removeEventListener("pointerup", onAnchor);
-    root.removeEventListener("keydown", onAnchor);
-    root.removeEventListener("submit", onSubmit);
-}
-
-function onSubmit(e: Event) {
-    if (!(e instanceof SubmitEvent && e.currentTarget instanceof Node && e.target instanceof HTMLFormElement)) return;
-
-    const hx = e.target.getAttribute("hx-placement");
-    if (!hx || hx !== "") return;
-
-    e.preventDefault();
-    e.currentTarget.dispatchEvent(new Event("hypermedia-request"));
+class HxFormEvent extends Event {
+    submitter;
+    constructor(submitter: HTMLElement | null) {
+        super("hx-form", {composed: true, bubbles: true});
+        this.submitter = submitter;
+    }
 }
 
 function onAnchor(e: Event) {
@@ -35,7 +27,17 @@ function onAnchor(e: Event) {
     if (!hx || hx !== "") return;
 
     e.preventDefault();
-    e.currentTarget.dispatchEvent(new Event("hypermedia-request"));
+    node.dispatchEvent(new HxAnchorEvent());
 }
 
-export { connect, disconnect }
+function onSubmit(e: Event) {
+    if (!(e instanceof SubmitEvent && e.target instanceof HTMLFormElement && e.currentTarget instanceof Node)) return;
+
+    const hx = e.target.getAttribute("hx-placement");
+    if (!hx || hx !== "") return;
+
+    e.preventDefault();
+    e.target.dispatchEvent(new HxFormEvent(e.submitter));
+}
+
+export { onAnchor, onSubmit, HxAnchorEvent, HxFormEvent }
