@@ -1,6 +1,5 @@
-import { onHx } from "../../hx-core/dist/mod.js";
+import { onHx } from "../../hx-request/dist/mod.js";
 import { HxResponse } from "../../hx-response/dist/mod.js";
-import { composeResponse } from "../../hx-response/dist/compose_response.js";
 
 // this is the opinionated setup
 // respond to pointer up, keyboard down, and submit events

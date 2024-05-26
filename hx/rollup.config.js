@@ -1,7 +1,7 @@
 export default {
     input: './dist/mod.js',
     output: {
-        file: './dist/bundle.min.js',
+        file: './dist/bundled.js',
         name: 'hx'
     }
 }

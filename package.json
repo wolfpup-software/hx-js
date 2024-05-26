@@ -1,6 +1,6 @@
 {
     "workspaces": [
-        "hx-core",
+        "hx-request",
         "hx-response",
         "hx"
     ],
