@@ -10,7 +10,7 @@ class HxRequestEvent extends Event implements HxRequestEventImpl {
     }
 }
 
-function isHxElement(e: Event) {
+function getHxElement(e: Event) {
     if (!(e.target instanceof Element)) return;
     if (!e.target.getAttribute("hx-placement")) return;
 
@@ -24,7 +24,7 @@ function isHxElement(e: Event) {
 }
 
 function onHx(e: Event) {
-    let el = isHxElement(e);
+    let el = getHxElement(e);
     if (el) {
         e.preventDefault();
         el.dispatchEvent(new HxRequestEvent(e));
