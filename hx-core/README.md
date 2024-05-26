@@ -11,8 +11,8 @@
 
 ## why
 
-`Hx-core` separates a hypermedia request from the a hypermedia response by using DOM `events`.
+`Hx-core` defines a barrier between hypermedia requests and responses with DOM `events`.
 
-Hacker pups can tailor their own response to an `hx-event`.
+Hacker pups can tailor their own response to an `hx-request` event without "espressive" apis and middleware gymnastics.
 
-It also avoids "espressive" apis and middleware gymnastics.
+WOOOF!

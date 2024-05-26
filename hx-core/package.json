@@ -2,11 +2,11 @@
   "name": "hx-core",
   "version": "0.1.0",
   "description": "",
+  "type": "module",
   "main": "dist/mod.js",
   "scripts": {
-    "build": "tsc --build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --build"
   },
-  "author": "",
+  "author": "wolfpup",
   "license": "BSD-3-Clause"
 }

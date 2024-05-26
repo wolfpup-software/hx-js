@@ -1,8 +1,8 @@
-interface HxEventImpl extends Event {
-    sourceEvent: Event
+interface HxRequestEventImpl extends Event {
+    sourceEvent: Event;
 }
 
-class HxEvent extends Event implements HxEventImpl {
+class HxRequestEvent extends Event implements HxRequestEventImpl {
     sourceEvent: Event;
     constructor(e: Event) {
         super("hx-request", { bubbles: true });
@@ -10,15 +10,26 @@ class HxEvent extends Event implements HxEventImpl {
     }
 }
 
-function onHx(e: Event) {
-    if (!(e.target instanceof HTMLElement)) return;
+function isHxElement(e: Event) {
+    if (!(e.target instanceof Element)) return;
+    if (!e.target.getAttribute("hx-placement")) return;
 
-    const hx = e.target.getAttribute("hx-placement");
-    if (!hx || hx !== "") return;
+    if (e.target instanceof HTMLFormElement) return e.target;
 
-    e.preventDefault();
-    e.target.dispatchEvent(new HxEvent(e));
+    let node: Element | null = e.target;
+    while (node && node !== e.currentTarget) {
+        if (node instanceof HTMLAnchorElement) return node;
+        node = node.parentElement;
+    }
 }
 
-export type { HxEventImpl };
-export { onHx, HxEvent }
+function onHx(e: Event) {
+    let el = isHxElement(e);
+    if (el) {
+        e.preventDefault();
+        el.dispatchEvent(new HxRequestEvent(e));
+    }
+}
+
+export type { HxRequestEventImpl };
+export { onHx, HxRequestEvent }

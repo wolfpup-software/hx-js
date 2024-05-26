@@ -3,8 +3,8 @@
         "rootDir": "./src",
         "outDir": "./dist",
         "lib": ["DOM", "ESNext"],
-        "target": "ESNext",
         "module": "ESNext",
+        "target": "ESNext",
         "declaration": true
     }
 }
