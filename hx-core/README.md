@@ -1,13 +1,13 @@
 # hx-core
 
-`Hx-core` callbacks dispatch `hx-anchor` and `hx-submit` events.
+`Hx-core` callbacks dispatch `hx-request` events.
 
 ## events
 
-`hx-event`
-- e.target -> the `anchor` element
+`hx-request`
+- e.target -> the `anchor` or `form` element
 - e.currentTarget -> the "root" element, assumed to be a `body` or `shadow root`
--e.originalEvent -> the `DOM` event triggering an `hx-anchor` event
+-e.originalEvent -> the `DOM` event triggering an `hx-request` event
 
 ## why
 
