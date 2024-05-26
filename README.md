@@ -1,54 +1,69 @@
 # hx-js
 
-A hypermedia extension for the browser.
+Hypermedia for the browser.
 
-## hx-core
+## Install
 
-Augment the default `<a>` and `<form>` elements to create rich hypermedia experiences in the browser.
+Add `hx-js` to an `html` document.
 
 ```html
-<a href="/some/url" target="selector" hx-placement="before">
+<script type=module src="https://github.com/wolfpup-software/hx-js/hx/dist/mod.js"></script>
+```
+
+Now `<a>` and `<form>` elements with an `hx-placement` attribute will fetch html `fragments` and update the dom!
+
+Elements _without_ the `hx-placement` attribute behave as normal `<a>` and `<form>` elements.
+
+## How to use
+
+### target
+
+`Hx` queries `elements` using the `target` attribute.
+
+A `target` value can be:
+- `_target` -> the `target` property of an `hx` event.
+- `_currentTarget` -> the `currentTarget` property for `hx` event
+- `_document` -> the document
+- any valid CSS selector.
+
+```html
+<!-- anchors -->
+<a
+    href="/document/fragment"
+    target="ul"
+    hx-placement="start">
     click me!
 </a>
 
-<form action="/some/form/url" method="post" target="selector" hx-placement="replace">
+<!-- forms -->
+<form
+    action="/post/something"
+    method="post"
+    target="li:last-child"
+    hx-placement="replace">
     <input type="submit">
 </form>
 ```
 
-Add the `hx-placement` attribute to `<a>` or `<form>` element to send an `hx-anchor` or `hx-form` event.
+After a `target` is queried, the `hx-placement` property defines how to place a document `fragment` relative to the `target`.
 
-## hx-callbacks
+An `hx-placement` properties can have the following values:
+- none -> nothing will happen
+- before -> before selected element
+- after -> after selected element
+- start -> before descendants
+- end -> after descendants
+- remove -> remove regardless
+- replace -> replace element
 
-`Hx` uses the `target` property to query an `element`.
+## That's it?
 
-```
-target -> event language?
-    _self -> the anchor or form element
-    selector -> any css selector used on a document, shadow dom, or html element
-```
+That's it!
 
-Then `hx` uses the `hx-placement` property to define a placement strategy for the response in relation to the `target`.
+`Hx-js` is designed to work as close to the `DOM` as possible. It's modular and easily extensible.
 
-```
-hx-placement
-    none -> nothing will happen
-    before -> before selected element
-    after -> after selected element
-    start -> before descendants
-    end -> after descendants
-    remove -> remove regardless
-    replace -> replace element
-```
-
-## External resources
-
-A response header `hx-resources` contains a list or urls (or none). This will trigger an asyncronous fetch of any external resources like web components, styles, etc.
-
-```
-hx-resources: "uwu.com/components/button.js;..."
-```
+See this [guide](./EXPLAINER.md) for more details and explanations.
 
 ## License
 
-`Hx-js` is released under the BSD 3-Clause License
+`Hx-js` is released under the BSD 3-Clause License.
