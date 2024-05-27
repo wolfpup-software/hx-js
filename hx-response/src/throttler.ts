@@ -3,6 +3,7 @@ class HxAbortSignal {
     #signals;
     createdAt;
     timeout;
+    aborted;
 
     constructor(timeout: number) {
         this.createdAt(performance.now());
@@ -19,6 +20,7 @@ class HxAbortSignal {
 
     abort() {
         this.#abortController.abort();
+        this.aborted = true;
     }
 
     getSignals() {
@@ -31,11 +33,10 @@ class Throttler {
 
     set(node: unknown) {
         if (!(node instanceof Element)) return;
-        
+
         let hxAbortSignal = this.#req.get(node);
-        if (hxAbortSignal) {
-            const now =  performance.now();
-            let delta = now - hxAbortSignal.createdAt
+        if (hxAbortSignal && !hxAbortSignal.aborted) {
+            let delta = performance.now() - hxAbortSignal.createdAt
             if (delta < hxAbortSignal.timeout) return;   
             hxAbortSignal.abort(); 
         }
