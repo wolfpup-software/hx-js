@@ -1,3 +1,4 @@
+// assume aborts only happen once
 class HxAbortSignal {
     #abortController;
     #signals;
@@ -45,7 +46,7 @@ class Throttler {
         let timeout = parseFloat(timeoutStr);
         if (Number.isNaN(timeout)) timeout = 5000;
 
-        hxAbortSignal = new HxAbortSignal(timeout)
+        hxAbortSignal = new HxAbortSignal(timeout);
         this.#req.set(node, hxAbortSignal);
         
         return hxAbortSignal;

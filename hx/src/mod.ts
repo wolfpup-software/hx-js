@@ -20,7 +20,7 @@ function disconnect(el: Node, eventlistener: EventListenerOrEventListenerObject)
 
 // use module for initial setup
 const hxResponse = new HxResponse();
-connect(document, hxResponse.onHxRequest)
+connect(document, hxResponse.onHxRequest);
 
 // provide an opportunity to connnect other nodes
 export { connect, disconnect, hxResponse as hx };

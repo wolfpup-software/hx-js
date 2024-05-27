@@ -4,7 +4,7 @@ class TaskQueue<T> {
     #task: T | undefined;
 
     enqueue(e: T) {
-        if (e === undefined) return;
+        if (!(e instanceof Object)) return;
 
         this.#enq.push(e);
         if (this.#task) return;

@@ -18,10 +18,9 @@ class HxResponse<T> implements HxResponseImpl<T> {
         let abortSignal = this.#throttler.set(e.target);
         if (!abortSignal) return;
 
-        let task = composeResponse(e, abortSignal);
-        if (task) this.#tasks.enqueue(task);
+        this.#tasks.enqueue(composeResponse(e, abortSignal));
     }
 }
 
-export { HxResponseEvent, ResponseDetails} from "./compose_response.js"
+export { HxResponseEvent } from "./compose_response.js"
 export { HxResponse }

@@ -1,51 +1,41 @@
 import { HxRequestEvent } from "../../hx-request/dist/mod.js";
 import { HxAbortSignal, Throttler } from "./throttler.js";
 
-class ResponseDetails {
-    request: Request;
-    response: Response | undefined;
-    text: string | undefined;
-    error: unknown;
-}
-
 class HxResponseEvent extends Event {
     sourceEvent: Event;
-    details: ResponseDetails;
+    request: Request;
+    response: Response | undefined;
+    error: unknown;
 
     constructor(
-        type: string,
         sourceEvent: Event,
-        details: ResponseDetails,
+        request: Request,
     ) {
-        super(type, { bubbles: true });
+        super("hx-response", { bubbles: true });
         this.sourceEvent = sourceEvent;
-        this.details = details;
+        this.request = request;
     }
 }
 
 async function composeResponse(e: Event, abortSignal: HxAbortSignal) {
     if (!(e.target instanceof Element)) return;
 
-    const target = e.target.getAttribute("target");
     const placement = e.target.getAttribute("hx-placement");
-    if (!(target && placement)) return;
+    if (placement === null) return;
 
     let request = buildHxRequest(e);
     if (!request) return;
     
-    // valid hx request
-    let details = new ResponseDetails();
-    details.request = request;
+    let hxResponse = new HxResponseEvent(e, request);
     try {
-        details.response = await fetch(details.request, {
+        hxResponse.response = await fetch(hxResponse.request, {
             signal: abortSignal.getSignals()
         });
     } catch (error: unknown) {
-        details.error = error;
+        hxResponse.error = error;
     }
 
-    details.text = await details.response.text();
-    e.target.dispatchEvent(new HxResponseEvent("hx-response", e, details));
+    e.target.dispatchEvent(hxResponse);
 }
 
 function buildHxRequest(e: Event): Request | undefined {
@@ -67,4 +57,4 @@ function buildHxRequest(e: Event): Request | undefined {
     }
 }
 
-export { composeResponse, ResponseDetails, HxResponseEvent }
+export { composeResponse, HxResponseEvent }
