@@ -25,6 +25,13 @@ class HxProjectEvent extends Event implements HxProjectEventImpl{
     }
 }
 
+class HxProjectError extends Error {
+    constructor(message: string) {
+        super();
+        this.message = message;
+    }
+}
+
 function projectPlacement(e: Event, targetNode: Node, fragment: Node): Node | undefined {
     if (!(e.target instanceof Element)) return;
 
@@ -45,7 +52,7 @@ function projectPlacement(e: Event, targetNode: Node, fragment: Node): Node | un
         }
     };
 
-    throw new Error("hx projection failed");
+    throw new HxProjectError("unknown hx-placement attribute");
 }
 
 function getTarget(e: Event): Node | undefined {
@@ -63,13 +70,13 @@ function getTarget(e: Event): Node | undefined {
 }
 
 function dangerouslyBuildTemplate(response: Response, text: string): Node {
-    let status = response.status;
-    if (status < 200 || status > 299) {
-        throw new Error(`status-code: ${status}`);
+    if (response.status !== 200) {
+        throw new HxProjectError(`unexpected response status code: ${response.status}`);
     };
-    let contentType = response.headers.get("content-type")
+
+    let contentType = response.headers.get("content-type");
     if (contentType !== "text/html; charset=utf-8") {
-        throw new Error(`content-type: ${contentType}`);
+        throw new HxProjectError(`unexpected content-type: ${contentType}`);
     };
 
     const templateEl = document.createElement("template");

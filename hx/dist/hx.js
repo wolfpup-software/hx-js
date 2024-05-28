@@ -23,7 +23,7 @@ function onHx(e) {
     let el = getHxElement(e);
     if (el) {
         e.preventDefault();
-        let composed = el.getAttribute("composed") !== null;
+        let composed = el.getAttribute("hx-composed") !== null;
         el.dispatchEvent(new HxRequestEvent(e, composed));
     }
 }
@@ -107,15 +107,25 @@ function buildHxRequest(e) {
 class HxAbortSignal {
     #abortController;
     #timeoutSignal;
-    constructor(timeoutMS) {
+    #throttle;
+    #createdAt;
+    constructor(throttleMS, timeoutMS) {
+        this.#throttle = throttleMS;
+        this.#createdAt = performance.now();
         this.#abortController = new AbortController();
         this.#timeoutSignal = AbortSignal.timeout(timeoutMS);
     }
+    get aborted() {
+        return this.#abortController.signal.aborted || this.#timeoutSignal.aborted;
+    }
+    throttle() {
+        let now = performance.now();
+        let delta = now - this.#createdAt;
+        if (delta > this.#throttle)
+            this.abort();
+    }
     abort() {
         this.#abortController.abort();
-    }
-    isAborted() {
-        return this.#abortController.signal.aborted || this.#timeoutSignal.aborted;
     }
     getSignals() {
         // AbortSignal.any is newly adoped, no DOM definition
@@ -132,12 +142,18 @@ class Throttler {
         if (!(node instanceof Element))
             return;
         let hxAbortSignal = this.#req.get(node);
-        if (hxAbortSignal && !hxAbortSignal.isAborted())
-            return;
+        if (hxAbortSignal) {
+            hxAbortSignal.throttle();
+            if (!hxAbortSignal.aborted)
+                return;
+        }
+        let throttle = parseFloat(node.getAttribute("hx-throttle"));
+        if (Number.isNaN(throttle))
+            throttle = 0;
         let timeout = parseFloat(node.getAttribute("hx-timeout"));
         if (Number.isNaN(timeout))
             timeout = 5000;
-        hxAbortSignal = new HxAbortSignal(timeout);
+        hxAbortSignal = new HxAbortSignal(throttle, timeout);
         this.#req.set(node, hxAbortSignal);
         return hxAbortSignal;
     }
@@ -170,6 +186,12 @@ class HxProjectEvent extends Event {
         this.sourceEvent = sourceEvent;
     }
 }
+class HxProjectError extends Error {
+    constructor(message) {
+        super();
+        this.message = message;
+    }
+}
 function projectPlacement(e, targetNode, fragment) {
     if (!(e.target instanceof Element))
         return;
@@ -188,31 +210,35 @@ function projectPlacement(e, targetNode, fragment) {
             case "after": return fragment.insertBefore(parent, targetNode.nextSibling);
         }
     }
-    throw new Error("hx projection failed");
+    throw new HxProjectError("unknown hx-placement attribute");
 }
 function getTarget(e) {
     if (!(e.target instanceof Element && e.currentTarget instanceof Element))
         return;
     const selector = e.target.getAttribute("target") || "_currentTarget";
-    if (selector === "_target")
-        return e.target;
-    if (selector === "_currentTarget")
-        return e.currentTarget;
-    if (selector === "_document")
-        return document;
+    switch (selector) {
+        case "_target": return e.target;
+        case "_currentTarget": return e.currentTarget;
+        case "_document": return document;
+    }
     return e.currentTarget.querySelector(selector);
 }
 function dangerouslyBuildTemplate(response, text) {
-    if (response.status >= 200 && response.status < 300)
-        return;
-    if (response.headers.get("content-type") !== "text/html; charset=utf-8")
-        return;
+    if (response.status !== 200) {
+        throw new HxProjectError(`unexpected response status code: ${response.status}`);
+    }
+    let contentType = response.headers.get("content-type");
+    if (contentType !== "text/html; charset=utf-8") {
+        throw new HxProjectError(`unexpected content-type: ${contentType}`);
+    }
     const templateEl = document.createElement("template");
     templateEl.innerHTML = text;
     return templateEl.content.cloneNode(true);
 }
 async function projectHxResponse(e) {
     if (!(e instanceof HxResponseEvent) || e.error || !e.response)
+        return;
+    if (!(e.target instanceof HTMLAnchorElement || e.target instanceof HTMLFormElement))
         return;
     const text = await e.response.text();
     queueMicrotask(function () {

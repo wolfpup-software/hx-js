@@ -27,7 +27,7 @@ function onHx(e: Event): void {
     let el = getHxElement(e);
     if (el) {
         e.preventDefault();
-        let composed = el.getAttribute("composed") !== null;
+        let composed = el.getAttribute("hx-composed") !== null;
         el.dispatchEvent(new HxRequestEvent(e, composed));
     }
 }
