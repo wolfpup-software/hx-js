@@ -1,14 +1,14 @@
 class HxRequestEvent extends Event {
     sourceEvent;
-    constructor(e) {
-        super("hx-request", { bubbles: true });
+    constructor(e, composed) {
+        super("hx-request", { bubbles: true, composed });
         this.sourceEvent = e;
     }
 }
 function getHxElement(e) {
     if (!(e.target instanceof Element))
         return;
-    if (e.target.getAttribute("hx-placement") === null)
+    if (!e.target.getAttribute("hx-placement"))
         return;
     if (e.target instanceof HTMLFormElement)
         return e.target;
@@ -23,7 +23,8 @@ function onHx(e) {
     let el = getHxElement(e);
     if (el) {
         e.preventDefault();
-        el.dispatchEvent(new HxRequestEvent(e));
+        let composed = el.getAttribute("composed") !== null;
+        el.dispatchEvent(new HxRequestEvent(e, composed));
     }
 }
 
@@ -32,8 +33,6 @@ class TaskQueue {
     #deq = [];
     #task;
     enqueue(e) {
-        if (!(e instanceof Object))
-            return;
         this.#enq.push(e);
         if (this.#task)
             return;
@@ -50,7 +49,6 @@ class TaskQueue {
         this.#task = this.#deq.pop();
         if (this.#task === undefined)
             return;
-        // could be errors
         await this.#task;
         this.#processNextTask();
     }
@@ -61,15 +59,17 @@ class HxResponseEvent extends Event {
     response;
     error;
     constructor(sourceEvent) {
-        super("hx-response", { bubbles: true });
+        super("hx-response", {
+            bubbles: true,
+            composed: sourceEvent.composed,
+        });
         this.sourceEvent = sourceEvent;
     }
 }
 async function composeResponse(e, abortSignal) {
     if (!(e.target instanceof Element))
         return;
-    const placement = e.target.getAttribute("hx-placement");
-    if (placement === null)
+    if (!e.target.getAttribute("hx-placement"))
         return;
     let request = buildHxRequest(e);
     if (!request)
@@ -77,12 +77,14 @@ async function composeResponse(e, abortSignal) {
     let hxResponse = new HxResponseEvent(e);
     try {
         hxResponse.response = await fetch(request, {
-            signal: abortSignal.getSignals()
+            signal: abortSignal.getSignals(),
         });
     }
     catch (error) {
         hxResponse.error = error;
     }
+    // abort regardless so throttler can delete
+    abortSignal.abort();
     e.target.dispatchEvent(hxResponse);
 }
 function buildHxRequest(e) {
@@ -92,9 +94,9 @@ function buildHxRequest(e) {
         return new Request(e.target.href);
     }
     if (e.target instanceof HTMLFormElement) {
-        let submitter = (e.sourceEvent instanceof SubmitEvent)
-            ? e.sourceEvent.submitter
-            : undefined;
+        let submitter;
+        if (e.sourceEvent instanceof SubmitEvent)
+            submitter = e.sourceEvent.submitter;
         return new Request(e.target.action, {
             method: e.target.getAttribute("method") || "get",
             body: new FormData(e.target, submitter)
@@ -102,30 +104,26 @@ function buildHxRequest(e) {
     }
 }
 
-// assume aborts only happen once
 class HxAbortSignal {
     #abortController;
-    #signals;
-    createdAt;
-    timeout;
-    aborted;
-    constructor(timeout) {
-        this.createdAt(performance.now());
-        this.timeout = timeout;
+    #timeoutSignal;
+    constructor(timeoutMS) {
         this.#abortController = new AbortController();
-        // abort signal is newly adoped, no DOM definition
-        // @ts-expect-error
-        this.#signals = AbortSignal.any([
-            this.#abortController.signal,
-            AbortSignal.timeout(timeout),
-        ]);
+        this.#timeoutSignal = AbortSignal.timeout(timeoutMS);
     }
     abort() {
         this.#abortController.abort();
-        this.aborted = true;
+    }
+    isAborted() {
+        return this.#abortController.signal.aborted || this.#timeoutSignal.aborted;
     }
     getSignals() {
-        return this.#signals;
+        // AbortSignal.any is newly adoped, no DOM definition
+        // @ts-expect-error
+        return AbortSignal.any([
+            this.#abortController.signal,
+            this.#timeoutSignal,
+        ]);
     }
 }
 class Throttler {
@@ -134,14 +132,9 @@ class Throttler {
         if (!(node instanceof Element))
             return;
         let hxAbortSignal = this.#req.get(node);
-        if (hxAbortSignal && !hxAbortSignal.aborted) {
-            let delta = performance.now() - hxAbortSignal.createdAt;
-            if (delta < hxAbortSignal.timeout)
-                return;
-            hxAbortSignal.abort();
-        }
-        let timeoutStr = node.getAttribute("hx-timeout");
-        let timeout = parseFloat(timeoutStr);
+        if (hxAbortSignal && !hxAbortSignal.isAborted())
+            return;
+        let timeout = parseFloat(node.getAttribute("hx-timeout"));
         if (Number.isNaN(timeout))
             timeout = 5000;
         hxAbortSignal = new HxAbortSignal(timeout);
@@ -164,79 +157,78 @@ class HxResponse {
     }
 }
 
-const placements = new Set(["none"]);
 class HxProjectEvent extends Event {
     sourceEvent;
     node;
     fragment;
     error;
     constructor(sourceEvent) {
-        super("hx-project", { bubbles: true });
+        super("hx-project", {
+            bubbles: true,
+            composed: sourceEvent.composed,
+        });
         this.sourceEvent = sourceEvent;
     }
 }
+function projectPlacement(e, targetNode, fragment) {
+    if (!(e.target instanceof Element))
+        return;
+    const placement = e.target.getAttribute("hx-placement");
+    switch (placement) {
+        case "none": return targetNode;
+        case "start": return fragment.insertBefore(targetNode, targetNode.firstChild);
+        case "end": return targetNode.appendChild(fragment);
+    }
+    const parent = targetNode.parentElement;
+    if (parent) {
+        switch (placement) {
+            case "replace": return parent.replaceChild(fragment, targetNode);
+            case "remove": return parent.removeChild(targetNode);
+            case "before": return fragment.insertBefore(parent, targetNode);
+            case "after": return fragment.insertBefore(parent, targetNode.nextSibling);
+        }
+    }
+    throw new Error("hx projection failed");
+}
+function getTarget(e) {
+    if (!(e.target instanceof Element && e.currentTarget instanceof Element))
+        return;
+    const selector = e.target.getAttribute("target") || "_currentTarget";
+    if (selector === "_target")
+        return e.target;
+    if (selector === "_currentTarget")
+        return e.currentTarget;
+    if (selector === "_document")
+        return document;
+    return e.currentTarget.querySelector(selector);
+}
+function dangerouslyBuildTemplate(response, text) {
+    if (response.status >= 200 && response.status < 300)
+        return;
+    if (response.headers.get("content-type") !== "text/html; charset=utf-8")
+        return;
+    const templateEl = document.createElement("template");
+    templateEl.innerHTML = text;
+    return templateEl.content.cloneNode(true);
+}
 async function projectHxResponse(e) {
-    if (!(e instanceof HxResponseEvent))
-        return;
-    if (!(e.target instanceof HTMLElement))
-        return;
-    // TODO: handle errors
-    if (!e.response)
+    if (!(e instanceof HxResponseEvent) || e.error || !e.response)
         return;
     const text = await e.response.text();
     queueMicrotask(function () {
-        if (!(e.target instanceof HTMLElement && e.currentTarget instanceof HTMLElement))
-            return;
-        const placement = e.target.getAttribute("hx-placement");
-        if (placements.has(placement))
-            return;
-        const selector = e.target.getAttribute("target") || "_currentTarget";
-        let targetNode;
-        if (selector === "_target")
-            targetNode = e.target;
-        if (selector === "_currentTarget")
-            targetNode = e.currentTarget;
-        if (selector === "_document")
-            targetNode = document;
         const event = new HxProjectEvent(e);
         try {
-            if (!targetNode)
-                targetNode = e.currentTarget.querySelector(selector);
-            if (targetNode instanceof Node) {
+            event.node = getTarget(e);
+            if (event.node)
                 event.fragment = dangerouslyBuildTemplate(e.response, text);
-            }
-            if (event.fragment) {
-                if (placement === "none")
-                    targetNode;
-                if (placement === "start")
-                    event.fragment.insertBefore(targetNode, targetNode.firstChild);
-                if (placement === "end")
-                    targetNode.appendChild(event.fragment);
-                const parent = targetNode.parentElement;
-                if (parent) {
-                    if (placement === "replace")
-                        parent.replaceChild(event.fragment, targetNode);
-                    if (placement === "remove")
-                        parent.removeChild(targetNode);
-                    if (placement === "before")
-                        event.fragment.insertBefore(parent, targetNode);
-                    if (placement === "after")
-                        event.fragment.insertBefore(parent, targetNode.nextSibling);
-                }
-                ;
-            }
-            ;
+            if (event.fragment)
+                projectPlacement(e, event.node, event.fragment);
         }
         catch (err) {
             event.error = err;
         }
         e.target.dispatchEvent(event);
     });
-}
-function dangerouslyBuildTemplate(response, text) {
-    const templateEl = document.createElement("template");
-    templateEl.innerHTML = text;
-    return templateEl.content.cloneNode(true);
 }
 
 class HxProject {
@@ -252,8 +244,6 @@ class HxProject {
     }
 }
 
-// this is the opinionated setup
-// respond to pointer up, keyboard down, and submit events
 function connect(el, onRequest, onResponse) {
     el.addEventListener("pointerup", onHx);
     el.addEventListener("keydown", onHx);
@@ -268,7 +258,6 @@ function disconnect(el, onRequest, onResponse) {
     el.removeEventListener("hx-request", onRequest);
     el.addEventListener("hx-response", onResponse);
 }
-// use module for initial setup
 const hxResponse = new HxResponse();
 const hxProject = new HxProject();
 connect(document, hxResponse.onHxRequest, hxProject.onHxResponse);

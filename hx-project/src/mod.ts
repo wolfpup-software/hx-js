@@ -1,11 +1,7 @@
 import { TaskQueue } from "../../hx-response/dist/task_queue.js";
-import { projectHxResponse } from "./render_response.js"
+import { projectHxResponse } from "./project_response.js"
 
-interface HxProjectImpl {
-    onHxResponse(e: Event): void;
-}
-
-class HxProject implements HxProjectImpl {
+class HxProject {
     #tasks = new TaskQueue();
 
     constructor() {
@@ -20,4 +16,6 @@ class HxProject implements HxProjectImpl {
     }
 }
 
+export type { HxProjectEventImpl } from "./project_response.js";
+export { HxProjectEvent } from "./project_response.js"
 export { HxProject }
