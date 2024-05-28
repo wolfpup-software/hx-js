@@ -10,9 +10,9 @@ class HxRequestEvent extends Event implements HxRequestEventImpl {
     }
 }
 
-function getHxElement(e: Event) {
+function getHxElement(e: Event): Element | undefined {
     if (!(e.target instanceof Element)) return;
-    if (e.target.getAttribute("hx-placement") === null) return;
+    if (!e.target.getAttribute("hx-placement")) return;
 
     if (e.target instanceof HTMLFormElement) return e.target;
 
@@ -23,11 +23,11 @@ function getHxElement(e: Event) {
     }
 }
 
-function onHx(e: Event) {
+function onHx(e: Event): void {
     let el = getHxElement(e);
     if (el) {
         e.preventDefault();
-        let composed = el.getAttribute("composed") === null ? false : true;
+        let composed = el.getAttribute("composed") !== null;
         el.dispatchEvent(new HxRequestEvent(e, composed));
     }
 }
