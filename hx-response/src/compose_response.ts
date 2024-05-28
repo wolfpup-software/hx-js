@@ -9,7 +9,7 @@ class HxResponseEvent extends Event {
     constructor(
         sourceEvent: Event,
     ) {
-        super("hx-response", { bubbles: true });
+        super("hx-response", { bubbles: true, composed: sourceEvent.composed });
         this.sourceEvent = sourceEvent;
     }
 }

@@ -11,7 +11,7 @@ class HxProjectEvent extends Event {
     constructor(
         sourceEvent: Event,
     ) {
-        super("hx-project", { bubbles: true });
+        super("hx-project", { bubbles: true, composed: sourceEvent.composed });
         this.sourceEvent = sourceEvent;
     }
 }
@@ -68,7 +68,7 @@ async function projectHxResponse(
 }
 
 function dangerouslyBuildTemplate(response: Response, text: string) {
-
+    if (response.status < 200 && response.status > 300) return;
 
     const templateEl = document.createElement("template");
     templateEl.innerHTML = text;

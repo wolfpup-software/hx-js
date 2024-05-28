@@ -4,8 +4,8 @@ interface HxRequestEventImpl extends Event {
 
 class HxRequestEvent extends Event implements HxRequestEventImpl {
     sourceEvent: Event;
-    constructor(e: Event) {
-        super("hx-request", { bubbles: true });
+    constructor(e: Event, composed: boolean) {
+        super("hx-request", { bubbles: true, composed });
         this.sourceEvent = e;
     }
 }
@@ -27,7 +27,8 @@ function onHx(e: Event) {
     let el = getHxElement(e);
     if (el) {
         e.preventDefault();
-        el.dispatchEvent(new HxRequestEvent(e));
+        let composed = el.getAttribute("composed") === null ? false : true;
+        el.dispatchEvent(new HxRequestEvent(e, composed));
     }
 }
 

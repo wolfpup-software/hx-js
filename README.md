@@ -1,6 +1,6 @@
 # hex-js
 
-(H)ypermedia (ex)tension for the browser.
+(H)ypermedia e(x)tension for the browser.
 
 ## Install
 
@@ -45,8 +45,9 @@ A `target` value can be:
 - `_document` -> the document
 - any valid CSS selector.
 
+### hx-placement
 
-After a `target` is successfully queried, the `hx-placement` property defines how to place a document `fragment` relative to the `target`.
+The `hx-placement` property defines how to place a document `fragment` relative to the `target`.
 
 An `hx-placement` properties can have the following values:
 - `none` -> nothing will happen
