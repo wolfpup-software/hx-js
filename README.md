@@ -1,30 +1,18 @@
 # hx-js
 
-Hypermedia for the browser.
+(H)ypermedia e(x)tension for the browser.
 
 ## Install
 
 Add `hx-js` to an `html` document.
 
 ```html
-<script type=module src="https://github.com/wolfpup-software/hx-js/hx/dist/mod.js"></script>
+<script type=module src="https://github.com/wolfpup-software/hex-js/hex/dist/min.js"></script>
 ```
-
-Now `<a>` and `<form>` elements with an `hx-placement` attribute will fetch html `fragments` and update the dom!
-
-Elements _without_ the `hx-placement` attribute behave as normal `<a>` and `<form>` elements.
 
 ## How to use
 
-### target
-
-`Hx` queries `elements` using the `target` attribute.
-
-A `target` value can be:
-- `_target` -> the `target` property of an `hx` event.
-- `_currentTarget` -> the `currentTarget` property for `hx` event
-- `_document` -> the document
-- any valid CSS selector.
+Anchor and form elements with an `hx-placement` attribute will fetch html `fragments` and update the dom.
 
 ```html
 <!-- anchors -->
@@ -45,16 +33,30 @@ A `target` value can be:
 </form>
 ```
 
-After a `target` is queried, the `hx-placement` property defines how to place a document `fragment` relative to the `target`.
+Elements _without_ the `hx-placement` attribute behave as normal `<a>` and `<form>` elements.
+
+### target
+
+`Hx` queries `elements` using the `target` attribute.
+
+A `target` value can be:
+- `_target` -> the `target` property of an hx `event`.
+- `_currentTarget` -> the `currentTarget` property for hx `event`
+- `_document` -> the document
+- any valid CSS selector.
+
+### hx-placement
+
+The `hx-placement` property defines how to place a document `fragment` relative to the `target`.
 
 An `hx-placement` properties can have the following values:
-- none -> nothing will happen
-- before -> before selected element
-- after -> after selected element
-- start -> before descendants
-- end -> after descendants
-- remove -> remove regardless
-- replace -> replace element
+- `none` -> nothing will happen
+- `before` -> insert fragment before the target element
+- `after` -> insert fragment after the target element
+- `start` -> insert fragment before the target element descendants
+- `end` -> append fragment after the target element descendants
+- `remove` -> remove the target element
+- `replace` -> replace the target element with the fragment
 
 ## That's it?
 

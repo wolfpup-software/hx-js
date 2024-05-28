@@ -1,3 +1,4 @@
-# Explainer
+# Hx Explainer
 
-(TODO)
+Hypermedia extension for the browser, explained.
+

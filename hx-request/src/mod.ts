@@ -4,13 +4,13 @@ interface HxRequestEventImpl extends Event {
 
 class HxRequestEvent extends Event implements HxRequestEventImpl {
     sourceEvent: Event;
-    constructor(e: Event) {
-        super("hx-request", { bubbles: true });
+    constructor(e: Event, composed: boolean) {
+        super("hx-request", { bubbles: true, composed });
         this.sourceEvent = e;
     }
 }
 
-function isHxElement(e: Event) {
+function getHxElement(e: Event): Element | undefined {
     if (!(e.target instanceof Element)) return;
     if (!e.target.getAttribute("hx-placement")) return;
 
@@ -23,11 +23,12 @@ function isHxElement(e: Event) {
     }
 }
 
-function onHx(e: Event) {
-    let el = isHxElement(e);
+function onHx(e: Event): void {
+    let el = getHxElement(e);
     if (el) {
         e.preventDefault();
-        el.dispatchEvent(new HxRequestEvent(e));
+        let composed = el.getAttribute("hx-composed") !== null;
+        el.dispatchEvent(new HxRequestEvent(e, composed));
     }
 }
 
