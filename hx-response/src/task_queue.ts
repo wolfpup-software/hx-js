@@ -1,18 +1,16 @@
-class TaskQueue<T> {
-    #enq: T[] = [];
-    #deq: T[] = [];
-    #task: T | undefined;
+class TaskQueue {
+    #enq: Promise<void>[] = [];
+    #deq: Promise<void>[] = [];
+    #task: Promise<void> | undefined;
 
-    enqueue(e: T) {
-        if (!(e instanceof Object)) return;
-
+    enqueue(e: Promise<void>): void {
         this.#enq.push(e);
         if (this.#task) return;
         
         this.#processNextTask();
     }
 
-    async #processNextTask() {
+    async #processNextTask(): Promise<void> {
         if (!this.#deq.length) {
             let r;
             while (r = this.#enq.pop()) {
@@ -24,7 +22,6 @@ class TaskQueue<T> {
         this.#task = this.#deq.pop();
         if (this.#task === undefined) return;
 
-        // could be errors
         await this.#task;
         this.#processNextTask();
     }

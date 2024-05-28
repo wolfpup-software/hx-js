@@ -2,11 +2,7 @@ import { TaskQueue } from "./task_queue.js";
 import { composeResponse } from "./compose_response.js";
 import { Throttler } from "./throttler.js";
 
-interface HxResponseImpl<T> {
-    onHxRequest(e: Event): void;
-}
-
-class HxResponse<T> implements HxResponseImpl<T> {
+class HxResponse {
     #tasks = new TaskQueue();
     #throttler = new Throttler();
 
@@ -22,5 +18,6 @@ class HxResponse<T> implements HxResponseImpl<T> {
     }
 }
 
-export { HxResponseEvent } from "./compose_response.js"
+export type { HxResponseEventImpl } from "./compose_response.js";
+export { HxResponseEvent } from "./compose_response.js";
 export { HxResponse }

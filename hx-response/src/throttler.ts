@@ -1,31 +1,27 @@
-// assume aborts only happen once
 class HxAbortSignal {
-    #abortController;
-    #signals;
-    createdAt;
-    timeout;
-    aborted;
+    #abortController: AbortController;
+    #timeoutSignal: AbortSignal;
 
-    constructor(timeout: number) {
-        this.createdAt(performance.now());
-        this.timeout = timeout;
+    constructor(timeoutMS: number) {
         this.#abortController = new AbortController();
-        
-        // abort signal is newly adoped, no DOM definition
-        // @ts-expect-error
-        this.#signals = AbortSignal.any([
-            this.#abortController.signal,
-            AbortSignal.timeout(timeout),
-        ]);
+        this.#timeoutSignal = AbortSignal.timeout(timeoutMS);
     }
 
-    abort() {
+    abort(): void {
         this.#abortController.abort();
-        this.aborted = true;
     }
 
-    getSignals() {
-        return this.#signals;
+    isAborted(): boolean {
+        return this.#abortController.signal.aborted || this.#timeoutSignal.aborted;
+    }
+    
+    getSignals(): AbortSignal {
+        // AbortSignal.any is newly adoped, no DOM definition
+        // @ts-expect-error
+        return AbortSignal.any([
+            this.#abortController.signal,
+            this.#timeoutSignal,
+        ]);
     }
 }
 
@@ -36,14 +32,9 @@ class Throttler {
         if (!(node instanceof Element)) return;
 
         let hxAbortSignal = this.#req.get(node);
-        if (hxAbortSignal && !hxAbortSignal.aborted) {
-            let delta = performance.now() - hxAbortSignal.createdAt
-            if (delta < hxAbortSignal.timeout) return;   
-            hxAbortSignal.abort(); 
-        }
+        if (hxAbortSignal && !hxAbortSignal.isAborted()) return;
 
-        let timeoutStr = node.getAttribute("hx-timeout");
-        let timeout = parseFloat(timeoutStr);
+        let timeout = parseFloat(node.getAttribute("hx-timeout"));
         if (Number.isNaN(timeout)) timeout = 5000;
 
         hxAbortSignal = new HxAbortSignal(timeout);
