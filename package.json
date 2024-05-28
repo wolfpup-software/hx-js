@@ -2,6 +2,7 @@
     "workspaces": [
         "hx-request",
         "hx-response",
+        "hx-project",
         "hx"
     ],
     "devDependencies": {

@@ -1,6 +1,6 @@
 # hex-js
 
-Hypermedia extension for the browser.
+(H)ypermedia (ex)tension for the browser.
 
 ## Install
 
@@ -12,7 +12,7 @@ Add `hx-js` to an `html` document.
 
 ## How to use
 
-When`<a>` and `<form>` elements have an `hx-placement` attribute, they will fetch html `fragments` and update the dom.
+Anchor and form elements with an `hx-placement` attribute will fetch html `fragments` and update the dom.
 
 ```html
 <!-- anchors -->
@@ -40,8 +40,8 @@ Elements _without_ the `hx-placement` attribute behave as normal `<a>` and `<for
 `Hx` queries `elements` using the `target` attribute.
 
 A `target` value can be:
-- `_target` -> the `target` property of an `hx` event.
-- `_currentTarget` -> the `currentTarget` property for `hx` event
+- `_target` -> the `target` property of an hx `event`.
+- `_currentTarget` -> the `currentTarget` property for hx `event`
 - `_document` -> the document
 - any valid CSS selector.
 
@@ -49,13 +49,13 @@ A `target` value can be:
 After a `target` is successfully queried, the `hx-placement` property defines how to place a document `fragment` relative to the `target`.
 
 An `hx-placement` properties can have the following values:
-- none -> nothing will happen
-- before -> before selected element
-- after -> after selected element
-- start -> before descendants
-- end -> after descendants
-- remove -> remove regardless
-- replace -> replace element
+- `none` -> nothing will happen
+- `before` -> insert fragment before the target element
+- `after` -> insert fragment after the target element
+- `start` -> insert fragment before the target element descendants
+- `end` -> append fragment after the target element descendants
+- `remove` -> remove the target element
+- `replace` -> replace the target element with the fragment
 
 ## That's it?
 

@@ -1,19 +1,16 @@
 import { HxRequestEvent } from "../../hx-request/dist/mod.js";
-import { HxAbortSignal, Throttler } from "./throttler.js";
+import { HxAbortSignal } from "./throttler.js";
 
 class HxResponseEvent extends Event {
     sourceEvent: Event;
-    request: Request;
     response: Response | undefined;
     error: unknown;
 
     constructor(
         sourceEvent: Event,
-        request: Request,
     ) {
         super("hx-response", { bubbles: true });
         this.sourceEvent = sourceEvent;
-        this.request = request;
     }
 }
 
@@ -26,9 +23,9 @@ async function composeResponse(e: Event, abortSignal: HxAbortSignal) {
     let request = buildHxRequest(e);
     if (!request) return;
     
-    let hxResponse = new HxResponseEvent(e, request);
+    let hxResponse = new HxResponseEvent(e);
     try {
-        hxResponse.response = await fetch(hxResponse.request, {
+        hxResponse.response = await fetch(request, {
             signal: abortSignal.getSignals()
         });
     } catch (error: unknown) {
