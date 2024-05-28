@@ -1,4 +1,4 @@
-# hex-js
+# hx-js
 
 (H)ypermedia e(x)tension for the browser.
 
