@@ -12,7 +12,7 @@ class HxRequestEvent extends Event implements HxRequestEventImpl {
 
 function getHxElement(e: Event): Element | undefined {
     if (!(e.target instanceof Element)) return;
-    if (!e.target.getAttribute("hx-placement")) return;
+    if (!e.target.getAttribute("hx-projection")) return;
 
     if (e.target instanceof HTMLFormElement) return e.target;
 

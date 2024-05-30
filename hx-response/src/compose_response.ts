@@ -26,21 +26,32 @@ class HxResponseEvent extends Event {
 
 async function composeResponse(e: Event, abortSignal: HxAbortSignal) {
     if (!(e.target instanceof Element)) return;
-    if (!e.target.getAttribute("hx-placement")) return;
+    if (!e.target.getAttribute("hx-projection")) return;
 
     let request = buildHxRequest(e);
     if (!request) return;
 
+    e.target.removeAttribute("hx-status-code");
+
+    e.target.setAttribute("hx-status", "requested");
     let hxResponse = new HxResponseEvent(e);
     try {
         hxResponse.response = await fetch(request, {
             signal: abortSignal.getSignals(),
         });
+        e.target.setAttribute("hx-status", "responded")
     } catch (error: unknown) {
         hxResponse.error = error;
+        e.target.setAttribute("hx-status", "error")
     }
 
-    // abort regardless so throttler can delete
+    if (hxResponse.response)
+        e.target.setAttribute(
+            "hx-status-code",
+            hxResponse.response.status.toString(),
+        );
+    
+    // abort regardless so throttler will delete
     abortSignal.abort();
     e.target.dispatchEvent(hxResponse);
 }
