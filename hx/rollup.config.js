@@ -8,4 +8,12 @@ export default [{
         name: 'hx'
     },
     plugins: [terser(), brotli()]
+},
+{
+    input: './dist/mod.js',
+    output: {
+        file: '../demo/hx.js',
+        name: 'hx'
+    },
+    plugins: [ brotli()]
 }]
