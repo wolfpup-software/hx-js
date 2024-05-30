@@ -7,14 +7,12 @@ function connect(el, onRequest, onResponse) {
     el.addEventListener("hx-request", onRequest);
     el.addEventListener("hx-response", onResponse);
 }
-;
 function disconnect(el, onRequest, onResponse) {
     el.removeEventListener("click", onHx);
     el.removeEventListener("submit", onHx);
     el.removeEventListener("hx-request", onRequest);
     el.addEventListener("hx-response", onResponse);
 }
-;
 const hxResponse = new HxResponse();
 const hxProject = new HxProject();
 connect(document, hxResponse.onHxRequest, hxProject.onHxResponse);
