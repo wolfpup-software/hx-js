@@ -1,6 +1,6 @@
 ## hx-response
 
-A linear message queue for hypermedia requests.
+A linear message queue for hypertext requests.
 
 ### events
 
@@ -14,8 +14,8 @@ A linear message queue for hypermedia requests.
 
 ## about
 
-`Hx-response` defines a barrier between hypermedia responses and their projection with DOM `events`.
+`Hx-response` defines a barrier between hypertext responses and their projection with DOM `events`.
 
-Hacker pups can tailor their own `hx-response` event callbacks to compose custom hypermedia requests.
+Hacker pups can tailor their own `hx-response` event callbacks to create custom document fragments.
 
 WOOOF!

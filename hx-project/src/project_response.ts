@@ -39,8 +39,8 @@ function projectPlacement(e: Event, targetNode: Node, fragment: Node): Node | un
     if (parent) {
         if (placement === "replace") return parent.replaceChild(fragment, targetNode);
         if (placement === "remove") return parent.removeChild(targetNode);
-        if (placement === "before") return fragment.insertBefore(parent, targetNode);
-        if (placement === "after") return fragment.insertBefore(parent, targetNode.nextSibling);
+        if (placement === "before") return parent.insertBefore(fragment, targetNode);
+        if (placement === "after") return parent.insertBefore(fragment, targetNode.nextSibling);
     }
 
     if (targetNode instanceof Element){
@@ -104,9 +104,9 @@ async function projectHxResponse(e: Event) {
             event.error = err;
         }
 
-        if (event.target instanceof Element) {
+        if (e.target instanceof Element) {
             const status = event.error ? "error" : "projected";
-            event.target.setAttribute("hx-status", status)
+            e.target.setAttribute("hx-status", status);
         }
 
         e.target.dispatchEvent(event);
