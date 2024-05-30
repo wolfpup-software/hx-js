@@ -72,9 +72,10 @@ The `hx-status` attribute is used to reflect the state of a hypertext request on
 
 The following values will be applied:
 - requested
+- request-error
 - responded
+- projection-error
 - projected
-- error
 
 ```html
 <a
@@ -103,17 +104,25 @@ The `hx-status-code` attribute is used to signal request state to the original `
 
 #### hx-composed
 
-The `hx-composed` attribute adds the `composed` property to an event allowing hx events to propagate through the shadow-dom.
+The `hx-composed` attribute adds the `composed` property to an event allowing hx events to propagate through a shadow root.
 
-This is helpful when developers need to use web components but don't want to import an external library.
+```html
+<a
+    href="/document/fragment"
+    target="ul"
+    hx-projection="start"
+    hx-composed>
+    click me!
+</a>
+```
 
 ## Developer Experience
 
-`Hx` is built to work as closely to the DOM as possible.
+`Hx` is designed to work _with_ the DOM.
 
 It's modular and easily extensible. 
 
-In lieu of "expressive" apis, `Hx` splits the process of making little hypertext jumps into a series of DOM events:
+In lieu of "expressive" apis, `Hx` separates the process of making small hypertext jumps into a series of DOM events:
 - hx-request events
 - hx-response events
 - hx-projection events
@@ -122,9 +131,9 @@ The `hx-request` module dispatches hx-request events from `<a>` and `<form>` ele
 
 The `hx-response` module dispatches hx-response events after recieving valid hx-request events.
 
-The `hx-project` module dispatches an hx-project event after placing a document fragment onto a document or shadow dom. 
+The `hx-project` module dispatches an hx-project event after placing a fragment into a document or shadow dom.
 
-Every part of the process is opt-in and can be overriden giving pups an opportunity to drop invalid requests and react to projections.
+Every part of the process is opt-in. Pups can listen to events to drop invalid requests and react to projections.
 
 ### Goals
 
@@ -134,7 +143,7 @@ The browser should already be doing this.
 
 Maybe not the same events, maybe not the same attributes, but little hypertext jumps should already be browser spec.
 
-Until then, `hx` intends to be a 1.5kb minified polyfil.
+Until then, `hx` intends to be a polyfil (at 1.5kb minified, zipped).
 
 ## License
 

@@ -42,7 +42,7 @@ async function composeResponse(e: Event, abortSignal: HxAbortSignal) {
         e.target.setAttribute("hx-status", "responded")
     } catch (error: unknown) {
         hxResponse.error = error;
-        e.target.setAttribute("hx-status", "error")
+        e.target.setAttribute("hx-status", "request-error")
     }
 
     if (hxResponse.response)
