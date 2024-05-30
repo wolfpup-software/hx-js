@@ -7,19 +7,19 @@
 Add `hx-js` to an `html` document.
 
 ```html
-<script type=module src="https://github.com/wolfpup-software/hex-js/hex/dist/min.js"></script>
+<script type=module src="https://raw.githubusercontent.com/wolfpup-software/hx-js/main/hx/dist/hx.js"></script>
 ```
 
 ## How to use
 
-Anchor and form elements with an `hx-placement` attribute will fetch html `fragments` and update the dom.
+Anchor and form elements with an `hx-projection` attribute will fetch html `fragments` and update the dom.
 
 ```html
 <!-- anchors -->
 <a
     href="/document/fragment"
     target="ul"
-    hx-placement="start">
+    hx-projection="start">
     click me!
 </a>
 
@@ -28,16 +28,16 @@ Anchor and form elements with an `hx-placement` attribute will fetch html `fragm
     action="/post/something"
     method="post"
     target="li:last-child"
-    hx-placement="replace">
+    hx-projection="replace">
     <input type="submit">
 </form>
 ```
 
-Elements _without_ the `hx-placement` attribute behave as normal `<a>` and `<form>` elements.
+Elements _without_ the `hx-projection` attribute behave as normal `<a>` and `<form>` elements.
 
 ### target
 
-`Hx` queries `elements` using the `target` attribute.
+`Hx` queries an element using the `target` attribute.
 
 A `target` value can be:
 - `_target` -> the `target` property of an hx `event`.
@@ -45,22 +45,22 @@ A `target` value can be:
 - `_document` -> the document
 - any valid CSS selector.
 
-### hx-placement
+### hx-projection
 
-The `hx-placement` property defines how to place a document `fragment` relative to the `target`.
+The `hx-projection` property defines how a `fragment` is projected onto a `document` relative to the `target` element.
 
-An `hx-placement` properties can have the following values:
+An `hx-projection` properties can have the following values:
 - `none` -> nothing will happen
-- `before` -> insert fragment before the target element
-- `after` -> insert fragment after the target element
-- `start` -> insert fragment before the target element descendants
-- `end` -> append fragment after the target element descendants
+- `before` -> insert a fragment before the target element
+- `after` -> insert a fragment after the target element
 - `remove` -> remove the target element
-- `replace` -> replace the target element with the fragment
+- `replace` -> place the target element with a fragment
+- `start` -> insert a fragment before the target element descendants
+- `end` -> append a fragment after the target element descendants
+- `remove_children` -> remove the target element descendants
+- `replace_children` -> replace the target element descendants with a fragment
 
-## That's it?
-
-That's it!
+## But wait, there's more!
 
 `Hx-js` is designed to work as close to the `DOM` as possible. It's modular and easily extensible.
 

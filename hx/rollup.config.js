@@ -7,11 +7,5 @@ export default [{
         file: './dist/hx.js',
         name: 'hx'
     },
-}, {
-    input: './dist/mod.js',
-    output: {
-        file: './dist/min.js',
-        name: 'hx-dist'
-    },
     plugins: [terser(), brotli()]
 }]

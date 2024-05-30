@@ -25,55 +25,50 @@ class HxProjectEvent extends Event implements HxProjectEventImpl{
     }
 }
 
-class HxProjectError extends Error {
-    constructor(message: string) {
-        super();
-        this.message = message;
-    }
-}
+class HxProjectError extends Error {}
 
 function projectPlacement(e: Event, targetNode: Node, fragment: Node): Node | undefined {
     if (!(e.target instanceof Element)) return;
 
-    const placement = e.target.getAttribute("hx-placement");
-    switch(placement) {
-        case "none": return targetNode;
-        case "start": return fragment.insertBefore(targetNode, targetNode.firstChild);
-        case "end": return targetNode.appendChild(fragment);
-    }
-
+    const placement = e.target.getAttribute("hx-projection");
+    if (placement === "none") return targetNode;
+    if (placement === "start") return fragment.insertBefore(targetNode, targetNode.firstChild);
+    if (placement === "end") return targetNode.appendChild(fragment);
+    
     const parent = targetNode.parentElement;
     if (parent) {
-        switch(placement) {
-            case "replace": return parent.replaceChild(fragment, targetNode);
-            case "remove": return parent.removeChild(targetNode);
-            case "before": return fragment.insertBefore(parent, targetNode);
-            case "after": return fragment.insertBefore(parent, targetNode.nextSibling);
-        }
-    };
+        if (placement === "replace") return parent.replaceChild(fragment, targetNode);
+        if (placement === "remove") return parent.removeChild(targetNode);
+        if (placement === "before") return fragment.insertBefore(parent, targetNode);
+        if (placement === "after") return fragment.insertBefore(parent, targetNode.nextSibling);
+    }
 
-    throw new HxProjectError("unknown hx-placement attribute");
+    if (targetNode instanceof Element){
+        if (placement === "remove_children") {
+            targetNode.replaceChildren();
+            return targetNode;
+        }
+        if (placement === "replace_children") {
+            targetNode.replaceChildren(fragment);
+            return targetNode;
+        };
+    }
+
+    throw new HxProjectError("unknown hx-projection attribute");
 }
 
 function getTarget(e: Event): Node | undefined {
     if (!(e.target instanceof Element && e.currentTarget instanceof Element)) return;
 
     const selector = e.target.getAttribute("target") || "_currentTarget";
-    
-    switch(selector) {
-        case "_target": return e.target;
-        case "_currentTarget": return e.currentTarget;
-        case "_document": return document;
-    }
+    if (selector === "_target") return e.target;
+    if (selector === "_currentTarget") return e.currentTarget;
+    if (selector === "_document") return document;
 
     return e.currentTarget.querySelector(selector);
 }
 
 function dangerouslyBuildTemplate(response: Response, text: string): Node {
-    if (response.status !== 200) {
-        throw new HxProjectError(`unexpected response status code: ${response.status}`);
-    };
-
     let contentType = response.headers.get("content-type");
     if (contentType !== "text/html; charset=utf-8") {
         throw new HxProjectError(`unexpected content-type: ${contentType}`);
@@ -100,6 +95,11 @@ async function projectHxResponse(e: Event) {
             if (event.fragment) projectPlacement(e, event.node, event.fragment);
         } catch (err: unknown) {
             event.error = err;
+        }
+
+        if (event.target instanceof Element) {
+            const status = event.error ? "error" : "projected";
+            event.target.setAttribute("hx-status", status)
         }
 
         e.target.dispatchEvent(event);

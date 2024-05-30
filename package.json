@@ -5,6 +5,10 @@
         "hx-project",
         "hx"
     ],
+    "scripts": {
+        "build": "npm run build --workspaces",
+        "bundle": "npm run bundle --workspace hx"
+    },
     "devDependencies": {
         "@rollup/plugin-terser": "^0.4.4",
         "rollup": "^4.18.0",

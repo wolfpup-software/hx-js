@@ -20,4 +20,7 @@ function disconnect(el, onRequest, onResponse) {
 const hxResponse = new HxResponse();
 const hxProject = new HxProject();
 connect(document, hxResponse.onHxRequest, hxProject.onHxResponse);
-export { connect, disconnect, hxResponse as hx };
+export { HxRequestEvent } from "../../hx-request/dist/mod.js";
+export { HxResponseEvent } from "../../hx-response/dist/mod.js";
+export { HxProjectEvent } from "../../hx-project/dist/mod.js";
+export { connect, disconnect };
