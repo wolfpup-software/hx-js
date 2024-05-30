@@ -11,8 +11,8 @@
 
 ## about
 
-`Hx-request` define a barrier between hypermedia requests and their responses with DOM `events`.
+`Hx-request` defines a barrier between hypertext requests and their responses with DOM `events`.
 
-Hacker pups can tailor their own `hx-request` callbacks to fetch custom responses without "espressive" apis and middleware gymnastics.
+Hacker pups can tailor their own `hx-request` callbacks to fetch custom responses.
 
 WOOOF!

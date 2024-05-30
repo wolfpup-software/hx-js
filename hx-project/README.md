@@ -11,8 +11,8 @@
 
 ## about
 
-`Hx-request` define a barrier between hypermedia requests and their responses with DOM `events`.
+`Hx-project` event dispatches after a document `fragment` is projected onto the DOM.
 
-Hacker pups can tailor their own `hx-request` callbacks to fetch custom responses without "espressive" apis and middleware gymnastics.
+Hacker pups can tailor their own `hx-project` callbacks to create reactive behavior (like adding a css class to trigger animations).
 
 WOOOF!

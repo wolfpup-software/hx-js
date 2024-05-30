@@ -32,15 +32,15 @@ function projectPlacement(e: Event, targetNode: Node, fragment: Node): Node | un
 
     const placement = e.target.getAttribute("hx-projection");
     if (placement === "none") return targetNode;
-    if (placement === "start") return fragment.insertBefore(targetNode, targetNode.firstChild);
+    if (placement === "start") return targetNode.insertBefore(fragment, targetNode.firstChild);
     if (placement === "end") return targetNode.appendChild(fragment);
     
     const parent = targetNode.parentElement;
     if (parent) {
         if (placement === "replace") return parent.replaceChild(fragment, targetNode);
         if (placement === "remove") return parent.removeChild(targetNode);
-        if (placement === "before") return fragment.insertBefore(parent, targetNode);
-        if (placement === "after") return fragment.insertBefore(parent, targetNode.nextSibling);
+        if (placement === "before") return parent.insertBefore(fragment, targetNode);
+        if (placement === "after") return parent.insertBefore(fragment, targetNode.nextSibling);
     }
 
     if (targetNode instanceof Element){
@@ -58,14 +58,21 @@ function projectPlacement(e: Event, targetNode: Node, fragment: Node): Node | un
 }
 
 function getTarget(e: Event): Node | undefined {
-    if (!(e.target instanceof Element && e.currentTarget instanceof Element)) return;
-
+    if (!(e.target instanceof Element)) return;
+    
     const selector = e.target.getAttribute("target") || "_currentTarget";
     if (selector === "_target") return e.target;
-    if (selector === "_currentTarget") return e.currentTarget;
     if (selector === "_document") return document;
 
-    return e.currentTarget.querySelector(selector);
+    if (e.currentTarget === null) {
+        if (selector === "_currentTarget") return document;
+        return document.querySelector(selector);
+    }
+
+    if (e.currentTarget instanceof Element) {
+        if (selector === "_currentTarget") return e.currentTarget;
+        return e.currentTarget.querySelector(selector);
+    }
 }
 
 function dangerouslyBuildTemplate(response: Response, text: string): Node {
@@ -97,9 +104,9 @@ async function projectHxResponse(e: Event) {
             event.error = err;
         }
 
-        if (event.target instanceof Element) {
+        if (e.target instanceof Element) {
             const status = event.error ? "error" : "projected";
-            event.target.setAttribute("hx-status", status)
+            e.target.setAttribute("hx-status", status);
         }
 
         e.target.dispatchEvent(event);

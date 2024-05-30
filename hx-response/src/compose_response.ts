@@ -51,8 +51,6 @@ async function composeResponse(e: Event, abortSignal: HxAbortSignal) {
             hxResponse.response.status.toString(),
         );
     
-    // abort regardless so throttler will delete
-    abortSignal.abort();
     e.target.dispatchEvent(hxResponse);
 }
 
