@@ -11,7 +11,10 @@
 Add `hx-js` to an `html` document.
 
 ```html
-<script type=module src="https://raw.githubusercontent.com/wolfpup-software/hx-js/main/hx/dist/hx.js"></script>
+<script
+	type="module"
+	src="https://raw.githubusercontent.com/wolfpup-software/hx-js/main/hx/dist/hx.js"
+></script>
 ```
 
 ## How to use
@@ -20,20 +23,16 @@ Anchor and form elements with an `hx-projection` attribute will fetch html `frag
 
 ```html
 <!-- anchors -->
-<a
-    href="/document/fragment"
-    target="ul"
-    hx-projection="start">
-    click me!
-</a>
+<a href="/document/fragment" target="ul" hx-projection="start"> click me! </a>
 
 <!-- forms -->
 <form
-    action="/post/something"
-    method="post"
-    target="li:last-child"
-    hx-projection="replace">
-    <input type="submit">
+	action="/post/something"
+	method="post"
+	target="li:last-child"
+	hx-projection="replace"
+>
+	<input type="submit" />
 </form>
 ```
 
@@ -46,6 +45,7 @@ Elements _without_ the `hx-projection` attribute behave like normal `<a>` and `<
 `Hx` queries an element using the `target` attribute.
 
 A `target` value can be:
+
 - `_target` -> the `target` property of an hx `event`.
 - `_currentTarget` -> the `currentTarget` property for hx `event`
 - `_document` -> the document
@@ -56,6 +56,7 @@ A `target` value can be:
 The `hx-projection` property defines how a `fragment` is projected onto a `document` relative to the `target` element.
 
 An `hx-projection` properties can have the following values:
+
 - `none` -> nothing will happen
 - `before` -> insert a fragment before the target element
 - `after` -> insert a fragment after the target element
@@ -71,6 +72,7 @@ An `hx-projection` properties can have the following values:
 The `hx-status` attribute is used to reflect the state of a hypertext request onto the original `<a>` or `<form>` element.
 
 The following values will be applied:
+
 - requested
 - request-error
 - responded
@@ -79,11 +81,12 @@ The following values will be applied:
 
 ```html
 <a
-    href="/document/fragment"
-    target="ul"
-    hx-projection="start"
-    hx-status="requested">
-    click me!
+	href="/document/fragment"
+	target="ul"
+	hx-projection="start"
+	hx-status="requested"
+>
+	click me!
 </a>
 ```
 
@@ -93,12 +96,13 @@ The `hx-status-code` attribute is used to signal request state to the original `
 
 ```html
 <a
-    href="/document/fragment"
-    target="ul"
-    hx-projection="start"
-    hx-status="responded"
-    hx-status-code="200">
-    click me!
+	href="/document/fragment"
+	target="ul"
+	hx-projection="start"
+	hx-status="responded"
+	hx-status-code="200"
+>
+	click me!
 </a>
 ```
 
@@ -107,12 +111,8 @@ The `hx-status-code` attribute is used to signal request state to the original `
 The `hx-composed` attribute adds the `composed` property to an event allowing hx events to propagate through a shadow root.
 
 ```html
-<a
-    href="/document/fragment"
-    target="ul"
-    hx-projection="start"
-    hx-composed>
-    click me!
+<a href="/document/fragment" target="ul" hx-projection="start" hx-composed>
+	click me!
 </a>
 ```
 
@@ -120,9 +120,10 @@ The `hx-composed` attribute adds the `composed` property to an event allowing hx
 
 `Hx` is designed to work _with_ the DOM.
 
-It's modular and easily extensible. 
+It's modular and easily extensible.
 
 In lieu of "expressive" apis, `Hx` separates the process of making small hypertext jumps into a series of DOM events:
+
 - hx-request events
 - hx-response events
 - hx-projection events

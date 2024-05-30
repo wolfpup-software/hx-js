@@ -5,6 +5,7 @@
 ## events
 
 `hx-request`
+
 - e.target -> the `anchor` or `form` element
 - e.currentTarget -> the element listening for interactions, assumed to be a `body` or `shadow root`
 - e.sourceEvent -> the `DOM` event triggering an `hx-request` event
