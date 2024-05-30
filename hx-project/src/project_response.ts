@@ -43,7 +43,11 @@ function projectPlacement(e: Event, targetNode: Node, fragment: Node): Node | un
         if (placement === "after") return parent.insertBefore(fragment, targetNode.nextSibling);
     }
 
-    if (targetNode instanceof Element){
+    if (
+        targetNode instanceof Element ||
+        targetNode instanceof Document ||
+        targetNode instanceof DocumentFragment
+    ){
         if (placement === "remove_children") {
             targetNode.replaceChildren();
             return targetNode;
@@ -105,7 +109,7 @@ async function projectHxResponse(e: Event) {
         }
 
         if (e.target instanceof Element) {
-            const status = event.error ? "error" : "projected";
+            const status = event.error ? "projection-error" : "projected";
             e.target.setAttribute("hx-status", status);
         }
 

@@ -113,7 +113,7 @@ This is helpful when developers need to use web components but don't want to imp
 
 It's modular and easily extensible. 
 
-In leiu of "expressive" apis, `Hx` splits the process of making little hypertext jumps into a series of DOM events:
+In lieu of "expressive" apis, `Hx` splits the process of making little hypertext jumps into a series of DOM events:
 - hx-request events
 - hx-response events
 - hx-projection events
