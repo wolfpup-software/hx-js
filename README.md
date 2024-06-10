@@ -4,7 +4,7 @@
 
 ## About
 
-`Hx` lets `<a>` and `<form>` elements _optionally_ fetch hypertext and update the DOM without page refreshes.
+`Hx` enables `<a>` and `<form>` elements to _optionally_ fetch hypertext and update the DOM without page refreshes.
 
 ## Install
 
@@ -13,8 +13,8 @@ Add `hx-js` to an `html` document.
 ```html
 <script
 	type="module"
-	src="https://raw.githubusercontent.com/wolfpup-software/hx-js/main/hx/dist/hx.js"
-></script>
+	src="https://raw.githubusercontent.com/wolfpup-software/hx-js/main/hx/dist/hx.js">
+</script>
 ```
 
 ## How to use
@@ -30,8 +30,7 @@ Anchor and form elements with an `hx-projection` attribute will fetch html `frag
 	action="/post/something"
 	method="post"
 	target="li:last-child"
-	hx-projection="replace"
->
+	hx-projection="replace">
 	<input type="submit" />
 </form>
 ```
@@ -46,8 +45,8 @@ Elements _without_ the `hx-projection` attribute behave like normal `<a>` and `<
 
 A `target` value can be:
 
-- `_target` -> the `target` property of an hx `event`.
-- `_currentTarget` -> the `currentTarget` property for hx `event`
+- `_target` -> the `target` property of an hx event.
+- `_currentTarget` -> the `currentTarget` property for hx event
 - `_document` -> the document
 - any valid CSS selector.
 
@@ -74,7 +73,7 @@ The `hx-status` attribute is used to reflect the state of a hypertext request on
 The following values will be applied:
 
 - requested
-- request-error
+- response-error
 - responded
 - projection-error
 - projected
@@ -84,8 +83,7 @@ The following values will be applied:
 	href="/document/fragment"
 	target="ul"
 	hx-projection="start"
-	hx-status="requested"
->
+	hx-status="requested">
 	click me!
 </a>
 ```
@@ -100,8 +98,7 @@ The `hx-status-code` attribute is used to signal request state to the original `
 	target="ul"
 	hx-projection="start"
 	hx-status="responded"
-	hx-status-code="200"
->
+	hx-status-code="200">
 	click me!
 </a>
 ```
@@ -122,7 +119,7 @@ The `hx-composed` attribute adds the `composed` property to an event allowing hx
 
 It's modular and easily extensible.
 
-In lieu of "expressive" apis, `Hx` separates the process of making small hypertext jumps into a series of DOM events:
+In lieu of "expressive" apis, `Hx` staggers small hypertext jumps into a series of DOM events:
 
 - hx-request events
 - hx-response events
@@ -134,13 +131,11 @@ The `hx-response` module dispatches hx-response events after recieving valid hx-
 
 The `hx-project` module dispatches an hx-project event after placing a fragment into a document or shadow dom.
 
-Every part of the process is opt-in. Pups can listen to events to drop invalid requests and react to projections.
+Every step is opt-in. Pups can listen to events to drop invalid requests and react to projections.
 
 ### Goals
 
-Deprecation by RFC.
-
-The browser should already be doing this.
+Deprecation by RFC. The browser should already be doing this.
 
 Maybe not the same events, maybe not the same attributes, but little hypertext jumps should already be browser spec.
 

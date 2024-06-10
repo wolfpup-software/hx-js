@@ -1,6 +1,8 @@
 node_modules/
 dist/
+demo/
 
 package-lock.json
 
+README.md
 *.html
