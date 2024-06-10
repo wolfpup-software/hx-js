@@ -13,8 +13,8 @@ Add `hx-js` to an `html` document.
 ```html
 <script
 	type="module"
-	src="https://raw.githubusercontent.com/wolfpup-software/hx-js/main/hx/dist/hx.js"
-></script>
+	src="https://raw.githubusercontent.com/wolfpup-software/hx-js/main/hx/dist/hx.js">
+</script>
 ```
 
 ## How to use
@@ -30,8 +30,7 @@ Anchor and form elements with an `hx-projection` attribute will fetch html `frag
 	action="/post/something"
 	method="post"
 	target="li:last-child"
-	hx-projection="replace"
->
+	hx-projection="replace">
 	<input type="submit" />
 </form>
 ```
@@ -84,8 +83,7 @@ The following values will be applied:
 	href="/document/fragment"
 	target="ul"
 	hx-projection="start"
-	hx-status="requested"
->
+	hx-status="requested">
 	click me!
 </a>
 ```
@@ -100,8 +98,7 @@ The `hx-status-code` attribute is used to signal request state to the original `
 	target="ul"
 	hx-projection="start"
 	hx-status="responded"
-	hx-status-code="200"
->
+	hx-status-code="200">
 	click me!
 </a>
 ```
