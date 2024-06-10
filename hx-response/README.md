@@ -14,7 +14,7 @@ WOOOF!
 
 `hx-response`
 
-- e.target -> the `anchor` or `form` element
+- e.target -> the `anchor` or `form` element dispatching the hx-request event
 - e.currentTarget -> the element listening for interactions, assumed to be a `body` or `shadow root`
 - e.sourceEvent -> the `hx-request` event responsible for an `hx-response` event
 - request -> the `request` used to fetch a `response`

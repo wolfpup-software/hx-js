@@ -1,12 +1,8 @@
 # hx-request
 
+`Hx-request` defines a boundary between hypertext requests and their responses with DOM events.
+
 `Hx-request` callbacks dispatch hx-request events.
-
-## about
-
-`Hx-request` defines a barrier between hypertext requests and their responses with DOM `events`.
-
-Hacker pups can tailor their own `hx-request` callbacks to fetch custom responses.
 
 WOOOF!
 
@@ -14,6 +10,6 @@ WOOOF!
 
 `hx-request`
 
-- e.target -> the `anchor` or `form` elements
+- e.target -> the `anchor` or `form` element dispatching the hx-request event
 - e.currentTarget -> the element listening for interactions, assumed to be a `body` or `shadow root`
-- e.sourceEvent -> the `DOM` event triggering an hx-request event
+- e.sourceEvent -> the `DOM` event responsible for an hx-request event
