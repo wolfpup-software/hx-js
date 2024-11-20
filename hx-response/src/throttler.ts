@@ -27,8 +27,6 @@ class HxAbortSignal {
 	}
 
 	getSignals(): AbortSignal {
-		// AbortSignal.any is newly adoped, no DOM definition
-		// @ts-expect-error
 		return AbortSignal.any([this.#abortController.signal, this.#timeoutSignal]);
 	}
 }
