@@ -1,4 +1,4 @@
 node_modules/
-hx-request/dist/
-hx-response/dist/
-hx-project/dist/
+dist/
+
+tsconfig.tsbuildinfo
