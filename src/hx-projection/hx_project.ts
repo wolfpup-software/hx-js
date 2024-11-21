@@ -1,4 +1,4 @@
-import { TaskQueue } from "../../hx-response/dist/task_queue.js";
+import { TaskQueue } from "../hx-response/task_queue.js";
 import { projectHxResponse } from "./project_response.js";
 
 class HxProject {

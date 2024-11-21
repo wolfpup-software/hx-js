@@ -1,4 +1,4 @@
-import { HxRequestEvent } from "../../hx-request/dist/mod.js";
+import { HxRequestEvent } from "../hx-request/mod.js";
 import { HxAbortSignal } from "./throttler.js";
 
 interface HxResponseEventImpl {

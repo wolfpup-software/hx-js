@@ -1,4 +1,4 @@
-import { HxResponseEvent } from "../../hx-response/dist/mod.js";
+import { HxResponseEvent } from "../hx-response/mod.js";
 
 interface HxProjectEventImpl {
 	sourceEvent: Event;
