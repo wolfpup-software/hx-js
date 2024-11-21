@@ -28,3 +28,5 @@ const hxResponse = new HxResponse();
 const hxProject = new HxProject();
 
 connect(document, hxResponse.onHxRequest, hxProject.onHxResponse);
+
+export { connect, disconnect };
