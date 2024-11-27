@@ -33,19 +33,19 @@ function projectPlacement(
 	if (!(e.target instanceof Element)) return;
 
 	const placement = e.target.getAttribute("hx-projection");
-	if (placement === "none") return targetNode;
-	if (placement === "start")
+	if ("none" === placement) return targetNode;
+	if ("start" === placement)
 		return targetNode.insertBefore(fragment, targetNode.firstChild);
-	if (placement === "end") return targetNode.appendChild(fragment);
+	if ("end" === placement) return targetNode.appendChild(fragment);
 
 	const parent = targetNode.parentElement;
 	if (parent) {
-		if (placement === "replace")
+		if ("replace" === placement)
 			return parent.replaceChild(fragment, targetNode);
-		if (placement === "remove") return parent.removeChild(targetNode);
-		if (placement === "before")
+		if ("remove" === placement) return parent.removeChild(targetNode);
+		if ("before" === placement)
 			return parent.insertBefore(fragment, targetNode);
-		if (placement === "after")
+		if ("after" === placement)
 			return parent.insertBefore(fragment, targetNode.nextSibling);
 	}
 
@@ -54,16 +54,17 @@ function projectPlacement(
 		targetNode instanceof Document ||
 		targetNode instanceof DocumentFragment
 	) {
-		if (placement === "remove_children") {
+		if ("remove_children" === placement) {
 			targetNode.replaceChildren();
 			return targetNode;
 		}
-		if (placement === "replace_children") {
+		if ("replace_children" === placement) {
 			targetNode.replaceChildren(fragment);
 			return targetNode;
 		}
 	}
 
+	// maybe fail silently?
 	throw new HxProjectError("unknown hx-projection attribute");
 }
 
@@ -71,23 +72,24 @@ function getTarget(e: Event): Node | undefined {
 	if (!(e.target instanceof Element)) return;
 
 	const selector = e.target.getAttribute("target") || "_currentTarget";
-	if (selector === "_target") return e.target;
-	if (selector === "_document") return document;
+	if ("_target" === selector) return e.target;
+	if ("_document" === selector) return document;
 
 	if (e.currentTarget === null) {
-		if (selector === "_currentTarget") return document;
+		if ("_currentTarget" === selector) return document;
 		return document.querySelector(selector);
 	}
 
 	if (e.currentTarget instanceof Element) {
-		if (selector === "_currentTarget") return e.currentTarget;
+		if ("_currentTarget" === selector) return e.currentTarget;
 		return e.currentTarget.querySelector(selector);
 	}
 }
 
 function dangerouslyBuildTemplate(response: Response, text: string): Node {
 	let contentType = response.headers.get("content-type");
-	if (contentType !== "text/html; charset=utf-8") {
+	if ("text/html; charset=utf-8" !== contentType) {
+		// maybe fail silently?
 		throw new HxProjectError(`unexpected content-type: ${contentType}`);
 	}
 

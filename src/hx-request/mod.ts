@@ -11,8 +11,8 @@ class HxRequestEvent extends Event implements HxRequestEventImpl {
 }
 
 function getHxElement(e: Event): Element | undefined {
-	if (!(e.target instanceof Element)) return;
 	if (e.target instanceof HTMLFormElement) return e.target;
+	if (!(e.target instanceof Element)) return;
 
 	let node: Element | null = e.target;
 	while (node && node !== e.currentTarget) {
@@ -22,15 +22,14 @@ function getHxElement(e: Event): Element | undefined {
 }
 
 function onHx(e: Event): void {
-	let el = getHxElement(e);
-	if (el) {
-		if (!el.getAttribute("hx-projection")) return;
+	const el = getHxElement(e);
+	if (!el) return;
+	if (!el.getAttribute("hx-projection")) return;
 
-		e.preventDefault();
+	e.preventDefault();
 
-		let composed = el.getAttribute("hx-composed") !== null;
-		el.dispatchEvent(new HxRequestEvent(e, composed));
-	}
+	const composed = el.getAttribute("hx-composed") !== null;
+	el.dispatchEvent(new HxRequestEvent(e, composed));
 }
 
 export type { HxRequestEventImpl };
