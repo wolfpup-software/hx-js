@@ -1,4 +1,4 @@
-# hx-js
+# hex-js
 
 (H)ypertext e(x)tension for the browser.
 
@@ -16,24 +16,56 @@ npm install https://github.com/wolfpup-software/hx-js
 
 ## How to use
 
+### Fetch DOM
+
 Anchor and form elements with an `hx-projection` attribute will fetch html `fragments` and update the dom.
 
 ```html
+<!-- Fetch HTML with hx-projection -->
 <!-- anchors -->
-<a href="/document/fragment" target="ul" hx-projection="start"> click me! </a>
+<a
+	hx-projection="start"
+	href="/document/fragment"
+	target="ul">
+	click me!
+</a>
 
 <!-- forms -->
 <form
+	hx-projection="replace"
 	action="/post/something"
 	method="post"
 	target="li:last-child"
-	hx-projection="replace"
 >
-	<input type="submit" />
+	<input type="submit" >
 </form>
 ```
 
-Elements _without_ the `hx-projection` attribute behave like normal `<a>` and `<form>` elements.
+### Dispatch Events
+
+Button and input elements with an `hx-event` attribute will dispatch an corresponding `HxEvent`.
+
+UI data can be extracted from buttons and input elements.
+
+```html
+<!-- send UI data to local logic -->
+<button hx-event>
+	click me!
+</button>
+
+<input
+	hx-event
+	type="date">
+
+<form
+	action="/post/something"
+	method="post"
+>
+	<input hx-event type="submit" >
+</form>
+```
+
+Elements _without_ the `hx-projection` or the `hx-event` attribute behave like normal `<a>` and `<form>` elements.
 
 ### Attributes
 
