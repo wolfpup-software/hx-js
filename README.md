@@ -16,56 +16,52 @@ npm install https://github.com/wolfpup-software/hx-js
 
 ## How to use
 
+### Dispatch Events
+
+Buttons and inputs and forms with an `hx-event` attribute will dispatch an `HxEvent`.
+
+Afterwards, UI data can be extracted from buttons and input elements.
+
+```html
+<button hx-event="increment_count">+1</button>
+
+<input hx-event="set_calendar_date" type="date" />
+
+<form hx-event="submit_form">
+	<input />
+	<input type="submit" />
+</form>
+```
+
+Elements _without_ the the `hx-event` attribute behave like normal `<button>` and `<input>` and `<form>` elements.
+
+Submit and reset `<input>` and `<button>` elements do not dispatch `HxEvents`. They are semantically tied to `forms`
+
 ### Fetch DOM
 
-Anchor and form elements with an `hx-projection` attribute will fetch html `fragments` and update the dom.
+`<a>` and `<form>` elements with an `hx-projection` attribute fetch html `fragments` and update the dom.
+
+Projection is the process of placing UI fragments into the DOM.
 
 ```html
 <!-- Fetch HTML with hx-projection -->
 <!-- anchors -->
-<a
-	hx-projection="start"
-	href="/document/fragment"
-	target="ul">
-	click me!
-</a>
+<a href="/document/fragment" target="ul" hx-projection="start"> click me! </a>
 
 <!-- forms -->
 <form
-	hx-projection="replace"
 	action="/post/something"
 	method="post"
 	target="li:last-child"
+	hx-projection="replace"
 >
-	<input type="submit" >
+	<input type="submit" />
 </form>
 ```
 
-### Dispatch Events
+Elements _without_ the `hx-projection` or attribute behave like normal `<a>` and `<form>` elements.
 
-Button and input elements with an `hx-event` attribute will dispatch an corresponding `HxEvent`.
-
-UI data can be extracted from buttons and input elements.
-
-```html
-<!-- send UI data to local logic -->
-<button hx-event>
-	click me!
-</button>
-
-<input
-	hx-event
-	type="date">
-
-<form
-	action="/post/something"
-	method="post"
->
-	<input hx-event type="submit" >
-</form>
-```
-
-Elements _without_ the `hx-projection` or the `hx-event` attribute behave like normal `<a>` and `<form>` elements.
+The `hx-projection` property is _not_ available for `<button>` or `<input>` elements.
 
 ### Attributes
 
@@ -163,15 +159,7 @@ The `hx-response` module dispatches hx-response events after recieving valid hx-
 
 The `hx-project` module dispatches an hx-project event after placing a fragment into a document or shadow dom.
 
-Every step is opt-in. Pups can listen to events to drop invalid requests and react to projections.
-
-### Goals
-
-Deprecation by RFC. The browser should already be doing this.
-
-Maybe not the same events, maybe not the same attributes, but little hypertext jumps should already be browser spec.
-
-Until then, `hx` intends to be a polyfil (at 1.5kb minified, zipped).
+Every step is opt-in. Developers can listen to events, drop invalid requests, and react to projections.
 
 ## License
 

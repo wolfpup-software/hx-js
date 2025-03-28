@@ -12,12 +12,14 @@ class HxRequestEvent extends Event implements HxRequestEventImpl {
 
 function getHxElement(e: Event): Element | undefined {
 	if (e.target instanceof HTMLFormElement) return e.target;
-	if (!(e.target instanceof Element)) return;
 
-	let node: Element | null = e.target;
-	while (node && node !== e.currentTarget) {
-		if (node instanceof HTMLAnchorElement) return node;
-		node = node.parentElement;
+	for (let node of e.composedPath()) {
+		if (
+			node instanceof HTMLAnchorElement ||
+			node instanceof HTMLButtonElement ||
+			node instanceof HTMLFormElement
+		)
+			return node;
 	}
 }
 
