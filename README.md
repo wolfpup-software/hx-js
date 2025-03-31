@@ -16,18 +16,19 @@ npm install https://github.com/wolfpup-software/hx-js
 
 ## How to use
 
-### Dispatch Events
+### Events
 
-Buttons and inputs and forms with an `hx-event` attribute will dispatch an `HxEvent`.
+Buttons and forms with an `hx-event` attribute will dispatch an `HxEvent`.
 
 Afterwards, UI data can be extracted from buttons and input elements.
 
 ```html
-<button hx-event="increment_count">+1</button>
+<button :="increment_count">+1</button>
+<button hx="decrement_count">-1</button>
 
-<input hx-event="set_calendar_date" type="date" />
+<input hx-action="set_calendar_date" type="date" />
 
-<form hx-event="submit_form">
+<form hx-event="update_form">
 	<input />
 	<input type="submit" />
 </form>
@@ -35,9 +36,7 @@ Afterwards, UI data can be extracted from buttons and input elements.
 
 Elements _without_ the the `hx-event` attribute behave like normal `<button>` and `<input>` and `<form>` elements.
 
-Submit and reset `<input>` and `<button>` elements do not dispatch `HxEvents`. They are semantically tied to `forms`
-
-### Fetch DOM
+### Requests
 
 `<a>` and `<form>` elements with an `hx-projection` attribute fetch html `fragments` and update the dom.
 
