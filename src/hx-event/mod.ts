@@ -7,12 +7,22 @@ interface HxEventInterface extends Event {
 }
 
 class HxEvent extends Event implements HxEvent {
-	action: string;
-	sourceEvent: Event;
+	#action: string;
+	#sourceEvent: Event;
+
 	constructor(e: Event, action: string) {
 		super(`:${e.type}`, { bubbles: true, composed: true });
-		this.action = action;
-		this.sourceEvent = e;
+
+		this.#action = action;
+		this.#sourceEvent = e;
+	}
+
+	get action(): string {
+		return this.#action;
+	}
+
+	get sourceEvent(): Event {
+		return this.#sourceEvent;
 	}
 }
 
