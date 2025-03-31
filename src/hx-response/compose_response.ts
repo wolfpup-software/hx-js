@@ -13,7 +13,7 @@ class HxResponseEvent extends Event {
 	error: unknown;
 
 	constructor(sourceEvent: Event) {
-		super("hx-response", {
+		super(":response", {
 			bubbles: true,
 			composed: sourceEvent.composed,
 		});

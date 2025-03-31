@@ -14,7 +14,7 @@ class HxProjectEvent extends Event implements HxProjectEventImpl {
 	error: unknown;
 
 	constructor(sourceEvent: Event) {
-		super("hx-project", {
+		super(":project", {
 			bubbles: true,
 			composed: sourceEvent.composed,
 		});
@@ -32,7 +32,7 @@ function projectPlacement(
 ): Node | undefined {
 	if (!(e.target instanceof Element)) return;
 
-	const placement = e.target.getAttribute("hx-projection");
+	const placement = e.target.getAttribute(":projection");
 	if ("none" === placement) return targetNode;
 	if ("start" === placement)
 		return targetNode.insertBefore(fragment, targetNode.firstChild);
@@ -65,25 +65,28 @@ function projectPlacement(
 	}
 
 	// maybe fail silently?
-	throw new HxProjectError("unknown hx-projection attribute");
+	throw new HxProjectError("unknown :projection attribute");
 }
 
 function getTarget(e: Event): Node | undefined {
 	if (!(e.target instanceof Element)) return;
 
-	const selector = e.target.getAttribute("target") || "_currentTarget";
+	// ?? ify logic
+	const selector = e.target.getAttribute("target") || "_document";
+
+	// const selector = e.target.getAttribute("target") || "_currentTarget";
 	if ("_target" === selector) return e.target;
 	if ("_document" === selector) return document;
 
-	if (e.currentTarget === null) {
-		if ("_currentTarget" === selector) return document;
-		return document.querySelector(selector);
-	}
+	// if (e.currentTarget === null) {
+	// 	if ("_currentTarget" === selector) return document;
+	// 	return document.querySelector(selector);
+	// }
 
-	if (e.currentTarget instanceof Element) {
-		if ("_currentTarget" === selector) return e.currentTarget;
-		return e.currentTarget.querySelector(selector);
-	}
+	// if (e.currentTarget instanceof Element) {
+	// 	if ("_currentTarget" === selector) return e.currentTarget;
+	// 	return e.currentTarget.querySelector(selector);
+	// }
 }
 
 function dangerouslyBuildTemplate(response: Response, text: string): Node {

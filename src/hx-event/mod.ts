@@ -1,5 +1,5 @@
 export type { HxEventInterface };
-export { dispatchHxEvent, dispatchHxOnSubmit, HxEvent};
+export { dispatchHxEvent, dispatchHxOnSubmit, HxEvent };
 
 interface HxEventInterface extends Event {
 	action: string;

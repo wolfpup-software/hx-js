@@ -23,12 +23,12 @@ Buttons and forms with an `hx-event` attribute will dispatch an `HxEvent`.
 Afterwards, UI data can be extracted from buttons and input elements.
 
 ```html
-<button :="increment_count">+1</button>
-<button hx="decrement_count">-1</button>
+<button :="increment">+1</button>
+<button :="decrement">-1</button>
 
-<input hx-action="set_calendar_date" type="date" />
+<input :="set_date" type="date" />
 
-<form hx-event="update_form">
+<form :="update_form">
 	<input />
 	<input type="submit" />
 </form>
@@ -38,29 +38,27 @@ Elements _without_ the the `hx-event` attribute behave like normal `<button>` an
 
 ### Requests
 
-`<a>` and `<form>` elements with an `hx-projection` attribute fetch html `fragments` and update the dom.
+`<a>` and `<form>` elements with an `:projection` attribute fetch html `fragments` and update the dom.
 
 Projection is the process of placing UI fragments into the DOM.
 
 ```html
-<!-- Fetch HTML with hx-projection -->
+<!-- Fetch HTML with :projection -->
 <!-- anchors -->
-<a href="/document/fragment" target="ul" hx-projection="start"> click me! </a>
+<a href="/document/fragment" target="ul" :projection="start"> click me! </a>
 
 <!-- forms -->
 <form
 	action="/post/something"
 	method="post"
 	target="li:last-child"
-	hx-projection="replace"
+	:projection="replace"
 >
 	<input type="submit" />
 </form>
 ```
 
-Elements _without_ the `hx-projection` or attribute behave like normal `<a>` and `<form>` elements.
-
-The `hx-projection` property is _not_ available for `<button>` or `<input>` elements.
+Elements _without_ the `:projection` or attribute behave like normal `<a>` and `<form>` elements.
 
 ### Attributes
 
@@ -71,15 +69,14 @@ The `hx-projection` property is _not_ available for `<button>` or `<input>` elem
 A `target` value can be:
 
 - `_target` -> the `target` property of an hx event.
-- `_currentTarget` -> the `currentTarget` property for hx event
 - `_document` -> the document
 - any valid CSS selector.
 
-#### hx-projection
+#### :projection
 
-The `hx-projection` property defines how a `fragment` is projected onto a `document` relative to the `target` element.
+The `:projection` property defines how a `fragment` is projected onto a `document` relative to the `target` element.
 
-An `hx-projection` properties can have the following values:
+An `:projection` properties can have the following values:
 
 - `none` -> nothing will happen
 - `before` -> insert a fragment before the target element
@@ -91,9 +88,9 @@ An `hx-projection` properties can have the following values:
 - `remove_children` -> remove the target element descendants
 - `replace_children` -> replace the target element descendants with a fragment
 
-#### hx-status
+#### :status
 
-The `hx-status` attribute is used to reflect the state of a hypertext request onto the original `<a>` or `<form>` element.
+The `:status` attribute is used to reflect the state of a hypertext request onto the original `<a>` or `<form>` element.
 
 The following values will be applied:
 
@@ -107,35 +104,35 @@ The following values will be applied:
 <a
 	href="/document/fragment"
 	target="ul"
-	hx-projection="start"
-	hx-status="requested"
+	:projection="start"
+	:status="requested"
 >
 	click me!
 </a>
 ```
 
-#### hx-status-code
+#### :status-code
 
-The `hx-status-code` attribute is used to signal request state to the original `<a>` or `<form>` element
+The `:status-code` attribute is used to signal request state to the original `<a>` or `<form>` element
 
 ```html
 <a
 	href="/document/fragment"
 	target="ul"
-	hx-projection="start"
-	hx-status="responded"
-	hx-status-code="200"
+	:projection="start"
+	:status="responded"
+	:status-code="200"
 >
 	click me!
 </a>
 ```
 
-#### hx-composed
+#### :composed
 
-The `hx-composed` attribute adds the `composed` property to an event allowing hx events to propagate through a shadow root.
+The `:composed` attribute adds the `composed` property to an event allowing hx events to propagate through a shadow root.
 
 ```html
-<a href="/document/fragment" target="ul" hx-projection="start" hx-composed>
+<a href="/document/fragment" target="ul" :projection="start" :composed>
 	click me!
 </a>
 ```
@@ -148,15 +145,15 @@ It's modular and easily extensible.
 
 In lieu of "expressive" apis, `Hx` staggers small hypertext jumps into a series of DOM events:
 
-- hx-request events
-- hx-response events
-- hx-projection events
+- :request events
+- :response events
+- :projection events
 
-The `hx-request` module dispatches hx-request events from `<a>` and `<form>` elements with an `hx-projection` attribute.
+The `:request` module dispatches :request events from `<a>` and `<form>` elements with an `:projection` attribute.
 
-The `hx-response` module dispatches hx-response events after recieving valid hx-request events.
+The `:response` module dispatches :response events after recieving valid :request events.
 
-The `hx-project` module dispatches an hx-project event after placing a fragment into a document or shadow dom.
+The `:project` module dispatches an :project event after placing a fragment into a document or shadow dom.
 
 Every step is opt-in. Developers can listen to events, drop invalid requests, and react to projections.
 

@@ -8,7 +8,7 @@ WOOOF!
 
 ## events
 
-`hx-request`
+`:request`
 
 - e.target -> the `anchor` or `form` element dispatching the hx-request event
 - e.currentTarget -> the element listening for interactions, assumed to be a `body` or `shadow root`

@@ -1,47 +1,49 @@
 import { dispatchHxEvent, dispatchHxOnSubmit } from "../hx-event/mod.js";
 
 const eventNames = [
-	"pointerup",
-	"pointerover",
-	"keydown",
-	"click",
 	"change",
+	"click",
+	"input",
+	"keydown",
+	"pointerover",
+	"pointerup",
+	"submit",
 ];
 
 class Hx {
 	connect(el: EventTarget) {
 		// interactions
 		for (let name of eventNames) {
-			el.addEventListener(name, dispatchHxEvent);
-		}
+			let dispatch = "submit" === name ? dispatchHxOnSubmit : dispatchHxEvent;
 
-		// form submission
-		el.addEventListener("submit", dispatchHxOnSubmit);
+			el.addEventListener(name, dispatch);
+		}
 	}
 
 	disconnect(el: EventTarget) {
 		for (let name of eventNames) {
-			el.removeEventListener(name, dispatchHxEvent);
+			let dispatch = "submit" === name ? dispatchHxOnSubmit : dispatchHxEvent;
+
+			el.removeEventListener(name, dispatch);
 		}
-		el.removeEventListener("submit", dispatchHxOnSubmit);
 	}
 }
 
 function connect(el: EventTarget) {
 	// interactions
 	for (let name of eventNames) {
-		el.addEventListener(name, dispatchHxEvent);
-	}
+		let dispatch = "submit" === name ? dispatchHxOnSubmit : dispatchHxEvent;
 
-	// form submission
-	el.addEventListener("submit", dispatchHxOnSubmit);
+		el.addEventListener(name, dispatch);
+	}
 }
 
 function disconnect(el: EventTarget) {
 	for (let name of eventNames) {
-		el.removeEventListener(name, dispatchHxEvent);
+		let dispatch = "submit" === name ? dispatchHxOnSubmit : dispatchHxEvent;
+
+		el.removeEventListener(name, dispatch);
 	}
-	el.removeEventListener("submit", dispatchHxOnSubmit);
 }
 
-export { Hx }
+export { Hx };

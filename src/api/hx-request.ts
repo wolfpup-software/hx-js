@@ -1,12 +1,7 @@
-import { dispastchHxRequestFromAnchor, dispatchHxRequestOnSubmit, } from "../hx-request/mod.js";
-
-const eventNames = [
-	"pointerup",
-	"keydown",
-	"click"
-];
-
-const formEvents = ["submit"];
+import {
+	dispatchHxRequestFromAnchor,
+	dispatchHxRequestOnSubmit,
+} from "../hx-request/mod.js";
 
 class HxRequest {
 	#el: Document | ShadowRoot;
@@ -17,21 +12,15 @@ class HxRequest {
 
 	connect() {
 		// interactions
-		for (let name of eventNames) {
-			this.#el.addEventListener(name, dispastchHxRequestFromAnchor);
-		}
-
+		this.#el.addEventListener("click", dispatchHxRequestFromAnchor);
 		// form submissions
 		this.#el.addEventListener("submit", dispatchHxRequestOnSubmit);
 	}
 
 	disconnect() {
-		for (let name of eventNames) {
-			this.#el.removeEventListener(name, dispastchHxRequestFromAnchor);
-		}
-
+		this.#el.removeEventListener("click", dispatchHxRequestFromAnchor);
 		this.#el.removeEventListener("submit", dispatchHxRequestOnSubmit);
 	}
 }
 
-export { HxRequest }
+export { HxRequest };
