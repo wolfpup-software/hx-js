@@ -72,9 +72,10 @@ function getTarget(e: Event): Node | undefined {
 	if (!(e.target instanceof Element)) return;
 
 	// ?? ify logic
-	const selector = e.target.getAttribute("target") || "_document";
+	// const selector = e.target.getAttribute("target") || "_document";
 
-	// const selector = e.target.getAttribute("target") || "_currentTarget";
+	// e.currentTarget
+	const selector = e.target.getAttribute("target") || "_currentTarget";
 	if ("_target" === selector) return e.target;
 	if ("_document" === selector) return document;
 

@@ -29,7 +29,6 @@ async function composeResponse(e: Event, abortSignal: AbortSignal) {
 	let request = buildHxRequest(e);
 	if (!request) return;
 
-
 	e.target.setAttribute("hx-status", "requested");
 	let hxResponse = new HxResponseEvent(e);
 	try {

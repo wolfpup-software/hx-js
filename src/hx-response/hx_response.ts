@@ -9,18 +9,13 @@ class HxResponse {
 
 	onHxRequest(e: Event): void {
 		// pass event to function
-
 		// create abort controller
 		// create request
 		// set e.target => abort controller
-
 		// on subsequet requersts targeting the same node
 		// abort the signal
-
-
 		// let abortSignal = this.#throttler.set(e.target);
 		// if (!abortSignal) return;
-
 		// this.#tasks.enqueue(composeResponse(e, abortSignal));
 	}
 }
