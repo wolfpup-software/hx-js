@@ -10,6 +10,6 @@ WOOOF!
 
 `:request`
 
-- e.target -> the `anchor` or `form` element dispatching the hx-request event
+- e.target -> the `anchor` or `form` dispatching an hx-request event
 - e.currentTarget -> the element listening for interactions, assumed to be a `body` or `shadow root`
 - e.sourceEvent -> the `DOM` event responsible for an hx-request event

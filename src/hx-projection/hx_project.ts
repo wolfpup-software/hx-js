@@ -1,8 +1,8 @@
-import { TaskQueue } from "../hx-response/task_queue.js";
+// import { TaskQueue } from "../hx-response/task_queue.js";
 import { projectHxResponse } from "./project_response.js";
 
 class HxProject {
-	#tasks = new TaskQueue();
+	// #tasks = new TaskQueue();
 
 	constructor() {
 		this.onHxResponse = this.onHxResponse.bind(this);
@@ -12,7 +12,7 @@ class HxProject {
 		let task = projectHxResponse(e);
 		if (!task) return;
 
-		this.#tasks.enqueue(task);
+		// this.#tasks.enqueue(task);
 	}
 }
 

@@ -1,5 +1,5 @@
 import { HxRequestEvent } from "../hx-request/mod.js";
-import { HxAbortSignal } from "./throttler.js";
+// import { HxAbortSignal } from "./throttler.js";
 
 interface HxResponseEventImpl {
 	sourceEvent: Event;
@@ -22,25 +22,24 @@ class HxResponseEvent extends Event {
 	}
 }
 
-async function composeResponse(e: Event, abortSignal: HxAbortSignal) {
+async function composeResponse(e: Event, abortSignal: AbortSignal) {
 	if (!(e.target instanceof Element)) return;
-	if (!e.target.getAttribute("hx-projection")) return;
+	if (!e.target.getAttribute(":projection")) return;
 
 	let request = buildHxRequest(e);
 	if (!request) return;
 
-	e.target.removeAttribute("hx-status-code");
 
 	e.target.setAttribute("hx-status", "requested");
 	let hxResponse = new HxResponseEvent(e);
 	try {
 		hxResponse.response = await fetch(request, {
-			signal: abortSignal.getSignals(),
+			signal: abortSignal,
 		});
-		e.target.setAttribute("hx-status", "responded");
+		// e.target.setAttribute("hx-status", "responded");
 	} catch (error: unknown) {
 		hxResponse.error = error;
-		e.target.setAttribute("hx-status", "response-error");
+		// e.target.setAttribute("hx-status", "response-error");
 	}
 
 	if (hxResponse.response)
@@ -53,20 +52,14 @@ async function composeResponse(e: Event, abortSignal: HxAbortSignal) {
 }
 
 function buildHxRequest(e: Event): Request | undefined {
-	if (!(e instanceof HxRequestEvent)) return;
-
 	if (e.target instanceof HTMLAnchorElement) {
 		return new Request(e.target.href);
 	}
 
 	if (e.target instanceof HTMLFormElement) {
-		let submitter: HTMLElement | undefined;
-		if (e.sourceEvent instanceof SubmitEvent)
-			submitter = e.sourceEvent.submitter;
-
 		return new Request(e.target.action, {
 			method: e.target.getAttribute("method") || "get",
-			body: new FormData(e.target, submitter),
+			body: new FormData(e.target),
 		});
 	}
 }

@@ -1,59 +1,33 @@
-class HxAbortSignal {
-	#abortController: AbortController;
-	#timeoutSignal: AbortSignal;
-	#throttle: number;
-	#createdAt: number;
+/* 
 
-	constructor(throttleMS: number, timeoutMS: number) {
-		this.#throttle = throttleMS;
-		this.#createdAt = performance.now();
-		this.#abortController = new AbortController();
-		this.#timeoutSignal = AbortSignal.timeout(timeoutMS);
-	}
+WeakMap
+	el => abortController,
 
-	get aborted(): boolean {
-		return this.#abortController.signal.aborted || this.#timeoutSignal.aborted;
-	}
+No matter what hit the abort controller?s
 
-	throttle(): void {
-		let now = performance.now();
-		let delta = now - this.#createdAt;
-
-		if (delta > this.#throttle) this.abort();
-	}
-
-	abort(): void {
-		this.#abortController.abort();
-	}
-
-	getSignals(): AbortSignal {
-		return AbortSignal.any([this.#abortController.signal, this.#timeoutSignal]);
-	}
-}
+*/
 
 class Throttler {
-	#req = new WeakMap<Element, HxAbortSignal>();
+	#req = new WeakMap<Element, AbortController>();
 
 	set(node: unknown) {
 		if (!(node instanceof Element)) return;
 
-		let hxAbortSignal = this.#req.get(node);
-		if (hxAbortSignal) {
-			hxAbortSignal.throttle();
-			if (!hxAbortSignal.aborted) return;
+		let abortSignal = this.#req.get(node);
+		if (abortSignal) {
+			abortSignal.abort();
 		}
 
-		let throttle = parseFloat(node.getAttribute("hx-throttle"));
-		if (Number.isNaN(throttle)) throttle = 0;
-
-		let timeout = parseFloat(node.getAttribute("hx-timeout"));
+		let timeout = parseFloat(node.getAttribute(":timeout"));
 		if (Number.isNaN(timeout)) timeout = 5000;
 
-		hxAbortSignal = new HxAbortSignal(throttle, timeout);
-		this.#req.set(node, hxAbortSignal);
+		// abortSignal = AbortSignal.timeout(timeout);
 
-		return hxAbortSignal;
+		// fetch / compose request
+		// this.#req.set(node, abortSignal);
+
+		return abortSignal;
 	}
 }
 
-export { HxAbortSignal, Throttler };
+export { Throttler };
