@@ -29,21 +29,4 @@ class Hx {
 	}
 }
 
-function connect(el: EventTarget) {
-	// interactions
-	for (let name of eventNames) {
-		let dispatch = "submit" === name ? dispatchHxOnSubmit : dispatchHxEvent;
-
-		el.addEventListener(name, dispatch);
-	}
-}
-
-function disconnect(el: EventTarget) {
-	for (let name of eventNames) {
-		let dispatch = "submit" === name ? dispatchHxOnSubmit : dispatchHxEvent;
-
-		el.removeEventListener(name, dispatch);
-	}
-}
-
 export { Hx };

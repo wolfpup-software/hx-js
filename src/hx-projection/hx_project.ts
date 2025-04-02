@@ -10,8 +10,6 @@ class HxProject {
 	onHxResponse(e: Event): void {
 		let task = projectHxResponse(e);
 		if (!task) return;
-
-		// this.#tasks.enqueue(task);
 	}
 }
 
