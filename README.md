@@ -88,6 +88,18 @@ An `:projection` properties can have the following values:
 - `remove_children` -> remove the target element descendants
 - `replace_children` -> replace the target element descendants with a fragment
 
+#### :throttle
+
+The `:throttle` property defines how to cancel a request on an anchor or form element before a new request is fetched.
+
+- `_target`
+- `_currentTarget`
+- `_projectionTarget`
+- `_document`
+- `none`
+
+The default value is `none`;
+
 #### :status
 
 The `:status` attribute is used to reflect the state of a hypertext request onto the original `<a>` or `<form>` element.
@@ -119,9 +131,9 @@ The `:status-code` attribute is used to signal request state to the original `<a
 <a
 	href="/document/fragment"
 	target="ul"
-	:projection="start"
-	:status="responded"
-	:status-code="200"
+	@projection="start"
+	@status="responded"
+	@status-code="200"
 >
 	click me!
 </a>
