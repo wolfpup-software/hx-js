@@ -104,36 +104,31 @@ function dangerouslyBuildTemplate(response: Response, text: string): Node {
 }
 
 async function projectHxResponse(e: Event) {
-	if (!(e instanceof HxResponseEvent) || e.error || !e.response) return;
-	if (
-		!(
-			e.target instanceof HTMLAnchorElement ||
-			e.target instanceof HTMLFormElement
-		)
-	)
-		return;
-
-	const text = await e.response.text();
-
-	queueMicrotask(function () {
-		const event = new HxProjectEvent(e);
-
-		try {
-			event.node = getTarget(e);
-			if (event.node)
-				event.fragment = dangerouslyBuildTemplate(e.response, text);
-			if (event.fragment) projectPlacement(e, event.node, event.fragment);
-		} catch (err: unknown) {
-			event.error = err;
-		}
-
-		if (e.target instanceof Element) {
-			const status = event.error ? "projection-error" : "projected";
-			e.target.setAttribute("hx-status", status);
-		}
-
-		e.target.dispatchEvent(event);
-	});
+	// if (!(e instanceof HxResponseEvent) || e.error || !e.response) return;
+	// if (
+	// 	!(
+	// 		e.target instanceof HTMLAnchorElement ||
+	// 		e.target instanceof HTMLFormElement
+	// 	)
+	// )
+	// 	return;
+	// const text = await e.response.text();
+	// queueMicrotask(function () {
+	// 	const event = new HxProjectEvent(e);
+	// 	try {
+	// 		event.node = getTarget(e);
+	// 		if (event.node)
+	// 			event.fragment = dangerouslyBuildTemplate(e.response, text);
+	// 		if (event.fragment) projectPlacement(e, event.node, event.fragment);
+	// 	} catch (err: unknown) {
+	// 		event.error = err;
+	// 	}
+	// 	if (e.target instanceof Element) {
+	// 		const status = event.error ? "projection-error" : "projected";
+	// 		e.target.setAttribute("hx-status", status);
+	// 	}
+	// 	e.target.dispatchEvent(event);
+	// });
 }
 
 export type { HxProjectEventImpl };

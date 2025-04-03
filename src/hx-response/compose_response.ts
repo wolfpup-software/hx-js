@@ -3,64 +3,40 @@ interface HxResponseEventImpl {
 	error: unknown;
 }
 
-interface ResponseParamsInterface {
-	response: Response;
-	error?: unknown;
-	projectionStyle: string;
-	throttleTarget: Node | null;
-	projectionTarget: Node | null;
-}
-
-// class HxRequestEvent extends Event {
-// 	#rp: RequestParamsInterface;
-
-// 	constructor(
-// 		type: string,
-// 		requestParams: RequestParamsInterface,
-// 		eventInit?: EventInit,
-// 	) {
-// 		super(type, eventInit);
-// 		this.#rp = requestParams;
-// 	}
-
-// 	get request() {
-// 		return this.#rp.request;
-// 	}
-
-// 	get projectionStyle() {
-// 		return this.#rp.projectionStyle;
-// 	}
-
-// 	get throttleTarget() {
-// 		return this.#rp.throttleTarget;
-// 	}
-
-// 	get projectionTarget() {
-// 		return this.#rp.projectionTarget;
-// 	}
-// }
-
 class HxResponseEvent extends Event {
-	projectionTarget: Node;
-	response?: Response;
-	error: unknown;
+	projectionTarget: Node | null;
+	projectionStyle: string;
+	response: Response;
 
-	constructor(eventInit?: EventInit) {
+	constructor(
+		response: Response,
+		projectionTarget: Node | null,
+		projectionStyle,
+		eventInit?: EventInit,
+	) {
 		super(":response", eventInit);
+		this.response = response;
+		this.projectionStyle = projectionStyle;
+		this.projectionTarget = projectionTarget;
 	}
 }
 
+function getProjectionStyle(el: Element) {
+	return el.getAttribute(":projection");
+}
+
 function getProjectionTarget(e: Event): Node | undefined {
-	if (!(e.target instanceof Element)) return null;
+	let { target, currentTarget } = e;
+	if (!(target instanceof Element)) return null;
 
-	const selector = e.target.getAttribute("target") || "_currentTarget";
+	const selector = target.getAttribute("target") || "_currentTarget";
 	if ("_document" === selector) return document;
-	if ("_target" === selector) return e.target;
+	if ("_target" === selector) return target;
 
-	if (!(e.currentTarget instanceof Element)) return null;
-	if ("_currentTarget" === selector) return e.currentTarget;
+	if (!(currentTarget instanceof Element)) return null;
+	if ("_currentTarget" === selector) return currentTarget;
 
-	e.currentTarget.querySelectorAll(selector);
+	currentTarget.querySelector(selector);
 }
 
 function getThrottleTarget(e: Event, projectionTarget: Node) {
@@ -85,36 +61,103 @@ function getTimeoutMs(el: Element) {
 	return timeoutMs;
 }
 
-async function composeResponse(e: Event, abortSignal: AbortSignal) {
-	if (!(e.target instanceof Element)) return;
-	if (!e.target.getAttribute(":projection")) return;
+function buildHxRequest(e: Event): Request | undefined {
+	let { target } = e;
+
+	if (target instanceof HTMLAnchorElement) {
+		return new Request(target.href);
+	}
+
+	if (target instanceof HTMLFormElement) {
+		return new Request(target.action, {
+			method: target.getAttribute("method") || "get",
+			body: new FormData(target),
+		});
+	}
+}
+
+function throttleRequest(
+	throttler: WeakMap<Node, AbortController>,
+	throttleTarget: Node,
+) {
+	let el = throttler.get(throttleTarget);
+	if (el) el.abort();
+}
+
+function getAbortController(target: Element): [AbortController, AbortSignal] {
+	let timeoutMs = getTimeoutMs(target);
+	let abortController = new AbortController();
+	let timeoutAbortSignal = AbortSignal.timeout(timeoutMs);
+	let signal = AbortSignal.any([abortController.signal, timeoutAbortSignal]);
+
+	return [abortController, signal];
+}
+
+function setThrottler(
+	throttler: WeakMap<Node, AbortController>,
+	throttleTarget: Node,
+	abortController: AbortController,
+) {
+	let el = throttler.get(throttleTarget);
+	if (el) el.abort();
+
+	throttler.set(throttleTarget, abortController);
+}
+
+function fetchAndDispatchResponseEvent(
+	target: EventTarget,
+	request: Request,
+	signal: AbortSignal,
+	projectionStyle: string,
+	projectionTarget: Node,
+) {
+	fetch(request, {
+		signal,
+	})
+		.then((response) => {
+			let event = new HxResponseEvent(
+				response,
+				projectionTarget,
+				projectionStyle,
+				{ bubbles: true, composed: true },
+			);
+			target.dispatchEvent(event);
+		})
+		.catch((reason: any) => {
+			let event = new Event(":response-error");
+			target.dispatchEvent(event);
+		});
+}
+
+async function composeResponse(
+	throttler: WeakMap<Node, AbortController>,
+	e: Event,
+) {
+	let { target } = e;
+	if (!(target instanceof Element)) return;
+
+	let projectionStyle = target.getAttribute(":projection");
+	if (!projectionStyle) return;
 
 	let request = buildHxRequest(e);
 	if (!request) return;
 
-	let hxResponse = new HxResponseEvent(e);
-	try {
-		hxResponse.response = await fetch(request, {
-			signal: abortSignal,
-		});
-	} catch (error: unknown) {
-		hxResponse.error = error;
-	}
+	let projectionTarget = getProjectionTarget(e);
+	let throttleTarget = getThrottleTarget(e, projectionTarget);
 
-	e.target.dispatchEvent(hxResponse);
-}
+	// set request status on projection and throttle target
 
-function buildHxRequest(e: Event): Request | undefined {
-	if (e.target instanceof HTMLAnchorElement) {
-		return new Request(e.target.href);
-	}
+	let [abortController, signal] = getAbortController(target);
 
-	if (e.target instanceof HTMLFormElement) {
-		return new Request(e.target.action, {
-			method: e.target.getAttribute("method") || "get",
-			body: new FormData(e.target),
-		});
-	}
+	setThrottler(throttler, throttleTarget, abortController);
+
+	fetchAndDispatchResponseEvent(
+		target,
+		request,
+		signal,
+		projectionStyle,
+		projectionTarget,
+	);
 }
 
 export type { HxResponseEventImpl };
