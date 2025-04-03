@@ -1,25 +1,4 @@
-interface HxResponseEventImpl {
-	response?: Response;
-	error: unknown;
-}
-
-class HxResponseEvent extends Event {
-	projectionTarget: Node | null;
-	projectionStyle: string;
-	response: Response;
-
-	constructor(
-		response: Response,
-		projectionTarget: Node | null,
-		projectionStyle,
-		eventInit?: EventInit,
-	) {
-		super(":response", eventInit);
-		this.response = response;
-		this.projectionStyle = projectionStyle;
-		this.projectionTarget = projectionTarget;
-	}
-}
+import { HxResponseEvent } from "./hx_response_event.js";
 
 function getProjectionStyle(el: Element) {
 	return el.getAttribute(":projection");
@@ -76,14 +55,6 @@ function buildHxRequest(e: Event): Request | undefined {
 	}
 }
 
-function throttleRequest(
-	throttler: WeakMap<Node, AbortController>,
-	throttleTarget: Node,
-) {
-	let el = throttler.get(throttleTarget);
-	if (el) el.abort();
-}
-
 function getAbortController(target: Element): [AbortController, AbortSignal] {
 	let timeoutMs = getTimeoutMs(target);
 	let abortController = new AbortController();
@@ -124,7 +95,10 @@ function fetchAndDispatchResponseEvent(
 			target.dispatchEvent(event);
 		})
 		.catch((reason: any) => {
-			let event = new Event(":response-error");
+			let event = new Event(":response-error", {
+				bubbles: true,
+				composed: true,
+			});
 			target.dispatchEvent(event);
 		});
 }
@@ -136,20 +110,19 @@ async function composeResponse(
 	let { target } = e;
 	if (!(target instanceof Element)) return;
 
-	let projectionStyle = target.getAttribute(":projection");
+	let projectionStyle = getProjectionStyle(target);
 	if (!projectionStyle) return;
 
 	let request = buildHxRequest(e);
 	if (!request) return;
 
+	let [abortController, signal] = getAbortController(target);
 	let projectionTarget = getProjectionTarget(e);
 	let throttleTarget = getThrottleTarget(e, projectionTarget);
 
-	// set request status on projection and throttle target
-
-	let [abortController, signal] = getAbortController(target);
-
 	setThrottler(throttler, throttleTarget, abortController);
+
+	// set request status on projection and target elements
 
 	fetchAndDispatchResponseEvent(
 		target,
@@ -160,5 +133,4 @@ async function composeResponse(
 	);
 }
 
-export type { HxResponseEventImpl };
-export { composeResponse, HxResponseEvent };
+export { composeResponse };

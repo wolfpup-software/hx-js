@@ -1,14 +1,19 @@
-// export type { HxRequestEventImpl } from "./hx-request/mod.js";
-// export type { HxResponseEventImpl } from "./hx-response/mod.js";
-// export type { HxProjectEventImpl } from "./hx-projection/mod.js";
-
-export { HxResponseEvent } from "./hx-response/mod.js";
-export { HxProjectEvent } from "./hx-projection/mod.js";
-
 // Hx event
 export type { HxEventInterface } from "./hx-event/mod.ts";
 export { HxEvent, dispatchHxEvent } from "./hx-event/mod.js";
 
+// Hx Request
+export {
+	dispatchHxRequestFromAnchor,
+	dispatchHxRequestOnSubmit,
+} from "./hx-request/mod.js";
+
+// Hx Resposne
+export type { HxResponseEventInterface } from "./hx-response/mod.ts";
+export { HxResponseEvent, HxResponse } from "./hx-response/mod.js";
+
+// Hx Projection
+
 // suggested api
-export { Hx } from "./api/hx.js";
-export { HxRequest } from "./api/hx-request.js";
+// export { Hx } from "./api/hx.js";
+// export { HxRequest } from "./api/hx-request.js";

@@ -3,6 +3,7 @@ import { dispatchHxEvent, dispatchHxOnSubmit } from "../hx-event/mod.js";
 const eventNames = [
 	"change",
 	"click",
+	"dblclick",
 	"input",
 	"keydown",
 	"pointerover",
