@@ -1,14 +1,6 @@
 export { dispatchHxRequestFromAnchor, dispatchHxRequestOnSubmit };
 
 // ANCHORS
-function getReqParams(eventTarget: EventTarget): Event {
-	if (!(eventTarget instanceof HTMLAnchorElement)) return;
-
-	// not an hx request
-	let projectionStyle = eventTarget.getAttribute(":projection");
-	if (!projectionStyle) return;
-}
-
 function getHxRequestEvent(e: Event, eventTarget: EventTarget): Event {
 	if (
 		eventTarget instanceof HTMLAnchorElement &&
@@ -34,7 +26,7 @@ function dispatchHxRequestFromAnchor(e: Event): void {
 }
 
 // FORMS
-function getHxRequestEventFromForm(e: Event, eventTarget: EventTarget): Event {
+function getHxRequestEventFromForm(eventTarget: EventTarget): Event {
 	if (
 		eventTarget instanceof HTMLFormElement &&
 		eventTarget.hasAttribute(":projection")
@@ -48,7 +40,7 @@ function getHxRequestEventFromForm(e: Event, eventTarget: EventTarget): Event {
 
 function dispatchHxRequestOnSubmit(e: Event): void {
 	let { target } = e;
-	let event = getHxRequestEventFromForm(e, target);
+	let event = getHxRequestEventFromForm(target);
 	if (event) {
 		e.preventDefault();
 		target.dispatchEvent(event);
