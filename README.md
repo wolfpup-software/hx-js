@@ -131,9 +131,9 @@ The `:status-code` attribute is used to signal request state to the original `<a
 <a
 	href="/document/fragment"
 	target="ul"
-	@projection="start"
-	@status="responded"
-	@status-code="200"
+	:projection="start"
+	*status="responded"
+	*status-code="200"
 >
 	click me!
 </a>

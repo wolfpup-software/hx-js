@@ -12,22 +12,25 @@ function getProjectionTarget(e: Event): Node | undefined {
 	if ("_document" === selector) return document;
 	if ("_target" === selector) return target;
 
-	if (!(currentTarget instanceof Element)) return null;
-	if ("_currentTarget" === selector) return currentTarget;
-
-	currentTarget.querySelector(selector);
+	if (
+		currentTarget instanceof Document ||
+		currentTarget instanceof DocumentFragment ||
+		currentTarget instanceof Element
+	) {
+		if ("_currentTarget" === selector) return currentTarget;
+		return currentTarget.querySelector(selector);
+	}
 }
 
-function getThrottleTarget(e: Event, projectionTarget: Node) {
-	if (!(e.target instanceof Element)) return null;
+function getThrottleTarget(e: Event, projectionTarget: Node): EventTarget {
+	let { target, currentTarget } = e;
+	if (!(target instanceof Element)) return null;
 
-	const selector = e.target.getAttribute(":throttle") || "none";
+	const selector = target.getAttribute(":throttle") || "none";
 	if ("_projectionTarget" === selector) return projectionTarget;
 	if ("_document" === selector) return document;
-	if ("_target" === selector) return e.target;
-
-	if (!(e.currentTarget instanceof Element)) return null;
-	if ("_currentTarget" === selector) return e.currentTarget;
+	if ("_target" === selector) return target;
+	if ("_currentTarget" === selector) return currentTarget;
 }
 
 function getTimeoutMs(el: Element) {
@@ -65,14 +68,14 @@ function getAbortController(target: Element): [AbortController, AbortSignal] {
 }
 
 function setThrottler(
-	throttler: WeakMap<Node, AbortController>,
-	throttleTarget: Node,
+	throttler: WeakMap<EventTarget, AbortController>,
+	throttleTarget: EventTarget | null,
 	abortController: AbortController,
 ) {
 	let el = throttler.get(throttleTarget);
 	if (el) el.abort();
 
-	throttler.set(throttleTarget, abortController);
+	if (throttleTarget) throttler.set(throttleTarget, abortController);
 }
 
 function fetchAndDispatchResponseEvent(
@@ -112,7 +115,10 @@ function fetchAndDispatchResponseEvent(
 		});
 }
 
-function composeResponse(throttler: WeakMap<Node, AbortController>, e: Event) {
+function composeResponse(
+	throttler: WeakMap<EventTarget, AbortController>,
+	e: Event,
+) {
 	let { target } = e;
 	if (!(target instanceof Element)) return;
 

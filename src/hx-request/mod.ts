@@ -1,7 +1,7 @@
 export { dispatchHxRequestFromAnchor, dispatchHxRequestOnSubmit };
 
 // ANCHORS
-function getHxRequestEvent(e: Event, eventTarget: EventTarget): Event {
+function getHxRequestEvent(eventTarget: EventTarget): Event {
 	if (
 		eventTarget instanceof HTMLAnchorElement &&
 		eventTarget.hasAttribute(":projection")
@@ -15,7 +15,7 @@ function getHxRequestEvent(e: Event, eventTarget: EventTarget): Event {
 
 function dispatchHxRequestFromAnchor(e: Event): void {
 	for (let eventTarget of e.composedPath()) {
-		let event = getHxRequestEvent(e, eventTarget);
+		let event = getHxRequestEvent(eventTarget);
 		if (event) {
 			// assuming only happends on click to prevent browser fetch
 			e.preventDefault();

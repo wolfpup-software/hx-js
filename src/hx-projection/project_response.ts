@@ -103,7 +103,8 @@ function dangerouslyBuildTemplate(response: Response, text: string): Node {
 	return templateEl.content.cloneNode(true);
 }
 
-async function projectHxResponse(e: Event) {
+function dispatchHxProjection(e: Event) {
+	console.log(e);
 	// if (!(e instanceof HxResponseEvent) || e.error || !e.response) return;
 	// if (
 	// 	!(
@@ -132,4 +133,4 @@ async function projectHxResponse(e: Event) {
 }
 
 export type { HxProjectEventImpl };
-export { projectHxResponse, HxProjectEvent };
+export { dispatchHxProjection, HxProjectEvent };
