@@ -1,4 +1,4 @@
-import { HxResponseEvent } from "./hx_response_event.js";
+import { HxResponseEvent, HxResponseErrorEvent } from "./hx_response_event.js";
 
 function getProjectionStyle(el: Element) {
 	return el.getAttribute(":projection");
@@ -85,17 +85,26 @@ function fetchAndDispatchResponseEvent(
 	fetch(request, {
 		signal,
 	})
-		.then((response) => {
+		.then(function (response) {
+			return Promise.all([response, response.text()]);
+		})
+		.then(function ([response, body]) {
+			let template = document.createElement("template");
+			template.innerHTML = body;
+
 			let event = new HxResponseEvent(
-				response,
-				projectionTarget,
-				projectionStyle,
+				{
+					template,
+					response,
+					projectionTarget,
+					projectionStyle,
+				},
 				{ bubbles: true, composed: true },
 			);
 			target.dispatchEvent(event);
 		})
-		.catch((reason: any) => {
-			let event = new Event(":response-error", {
+		.catch(function (reason: any) {
+			let event = new HxResponseErrorEvent(reason, {
 				bubbles: true,
 				composed: true,
 			});
@@ -103,10 +112,7 @@ function fetchAndDispatchResponseEvent(
 		});
 }
 
-async function composeResponse(
-	throttler: WeakMap<Node, AbortController>,
-	e: Event,
-) {
+function composeResponse(throttler: WeakMap<Node, AbortController>, e: Event) {
 	let { target } = e;
 	if (!(target instanceof Element)) return;
 
