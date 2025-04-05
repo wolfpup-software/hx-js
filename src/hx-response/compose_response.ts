@@ -4,25 +4,28 @@ function getProjectionStyle(el: Element) {
 	return el.getAttribute(":projection");
 }
 
-function getProjectionTarget(e: Event): Node | undefined {
+function getProjectionTarget(e: Event): EventTarget | undefined {
 	let { target, currentTarget } = e;
 	if (!(target instanceof Element)) return null;
 
 	const selector = target.getAttribute("target") || "_currentTarget";
 	if ("_document" === selector) return document;
 	if ("_target" === selector) return target;
+	if ("_currentTarget" === selector) return currentTarget;
 
 	if (
 		currentTarget instanceof Document ||
 		currentTarget instanceof DocumentFragment ||
 		currentTarget instanceof Element
 	) {
-		if ("_currentTarget" === selector) return currentTarget;
 		return currentTarget.querySelector(selector);
 	}
 }
 
-function getThrottleTarget(e: Event, projectionTarget: Node): EventTarget {
+function getThrottleTarget(
+	e: Event,
+	projectionTarget: EventTarget,
+): EventTarget {
 	let { target, currentTarget } = e;
 	if (!(target instanceof Element)) return null;
 
@@ -100,7 +103,7 @@ function fetchAndDispatchResponseEvent(
 	request: Request,
 	signal: AbortSignal,
 	projectionStyle: string,
-	projectionTarget: Node,
+	projectionTarget: EventTarget,
 ) {
 	fetch(request, {
 		signal,

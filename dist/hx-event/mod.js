@@ -1,4 +1,4 @@
-export { dispatchHxEvent, dispatchHxOnSubmit, HxEvent };
+export { dispatchHxEvent, dispatchHxFromForm, HxEvent };
 class HxEvent extends Event {
     #action;
     #typeAction;
@@ -42,7 +42,7 @@ function getHxEventFromForm(e) {
             return new HxEvent(e, action);
     }
 }
-function dispatchHxOnSubmit(e) {
+function dispatchHxFromForm(e) {
     let event = getHxEventFromForm(e);
     if (event) {
         e.preventDefault();

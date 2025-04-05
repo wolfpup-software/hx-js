@@ -1,5 +1,5 @@
 export type { HxEventInterface };
-export { dispatchHxEvent, dispatchHxOnSubmit, HxEvent };
+export { dispatchHxEvent, dispatchHxFromForm, HxEvent };
 
 interface HxEventInterface extends Event {
 	action: string;
@@ -56,7 +56,7 @@ function getHxEventFromForm(e: Event): Event | undefined {
 	}
 }
 
-function dispatchHxOnSubmit(e: Event): void {
+function dispatchHxFromForm(e: Event): void {
 	let event = getHxEventFromForm(e);
 	if (event) {
 		e.preventDefault();

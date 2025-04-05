@@ -11,11 +11,11 @@ function getProjectionTarget(e) {
         return document;
     if ("_target" === selector)
         return target;
+    if ("_currentTarget" === selector)
+        return currentTarget;
     if (currentTarget instanceof Document ||
         currentTarget instanceof DocumentFragment ||
         currentTarget instanceof Element) {
-        if ("_currentTarget" === selector)
-            return currentTarget;
         return currentTarget.querySelector(selector);
     }
 }

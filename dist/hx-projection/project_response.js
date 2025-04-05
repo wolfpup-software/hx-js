@@ -24,33 +24,33 @@ class HxProjectEvent extends Event {
 function projectPlacement(projectionTarget, template, projectionStyle) {
     let fragment = template.content.cloneNode(true);
     let results = [fragment, undefined];
-    if ("start" === projectionStyle) {
-        projectionTarget.insertBefore(fragment, projectionTarget.firstChild);
-    }
-    if ("end" === projectionStyle) {
-        projectionTarget.appendChild(fragment);
-    }
-    const { parentElement } = projectionTarget;
-    if (parentElement) {
-        if ("replace" === projectionStyle) {
-            parentElement.replaceChild(fragment, projectionTarget);
-        }
-        if ("remove" === projectionStyle) {
-            parentElement.removeChild(projectionTarget);
-        }
-        if ("before" === projectionStyle)
-            parentElement.insertBefore(fragment, projectionTarget);
-        if ("after" === projectionStyle)
-            parentElement.insertBefore(fragment, projectionTarget.nextSibling);
-    }
     if (projectionTarget instanceof Element ||
         projectionTarget instanceof Document ||
         projectionTarget instanceof DocumentFragment) {
+        if ("start" === projectionStyle) {
+            projectionTarget.insertBefore(fragment, projectionTarget.firstChild);
+        }
+        if ("end" === projectionStyle) {
+            projectionTarget.appendChild(fragment);
+        }
         if ("replace_children" === projectionStyle) {
             projectionTarget.replaceChildren(fragment);
         }
         if ("remove_children" === projectionStyle) {
             projectionTarget.replaceChildren();
+        }
+        const { parentElement } = projectionTarget;
+        if (parentElement) {
+            if ("replace" === projectionStyle) {
+                parentElement.replaceChild(fragment, projectionTarget);
+            }
+            if ("remove" === projectionStyle) {
+                parentElement.removeChild(projectionTarget);
+            }
+            if ("before" === projectionStyle)
+                parentElement.insertBefore(fragment, projectionTarget);
+            if ("after" === projectionStyle)
+                parentElement.insertBefore(fragment, projectionTarget.nextSibling);
         }
     }
     return results;
@@ -60,6 +60,11 @@ function dispatchHxProjection(e) {
         return;
     let { projectionStyle, projectionTarget, template } = e;
     let [projectedFragment, disconnectedFragment] = projectPlacement(projectionTarget, template, projectionStyle);
-    e.target.dispatchEvent(new HxProjectEvent({ projectionTarget, projectedFragment, disconnectedFragment, projectionStyle }));
+    e.target.dispatchEvent(new HxProjectEvent({
+        projectionTarget,
+        projectedFragment,
+        disconnectedFragment,
+        projectionStyle,
+    }));
 }
 export { dispatchHxProjection, HxProjectEvent };

@@ -1,4 +1,4 @@
-import { dispatchHxEvent, dispatchHxOnSubmit } from "../hx-event/mod.js";
+import { dispatchHxEvent, dispatchHxFromForm } from "../hx-event/mod.js";
 const eventNames = [
     "change",
     "click",
@@ -13,13 +13,17 @@ class Hx {
     connect(el) {
         // interactions
         for (let name of eventNames) {
-            let dispatch = "submit" === name ? dispatchHxOnSubmit : dispatchHxEvent;
+            let dispatch = "submit" === name || "reset" === name
+                ? dispatchHxFromForm
+                : dispatchHxEvent;
             el.addEventListener(name, dispatch);
         }
     }
     disconnect(el) {
         for (let name of eventNames) {
-            let dispatch = "submit" === name ? dispatchHxOnSubmit : dispatchHxEvent;
+            let dispatch = "submit" === name || "reset" === name
+                ? dispatchHxFromForm
+                : dispatchHxEvent;
             el.removeEventListener(name, dispatch);
         }
     }

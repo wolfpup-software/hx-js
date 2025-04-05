@@ -1,11 +1,11 @@
 interface HxResponseEventInterface {
-    projectionTarget: Node | null;
+    projectionTarget: EventTarget | null;
     projectionStyle: string;
     response: Response;
     template: HTMLTemplateElement;
 }
 interface HxResponseEventParams {
-    projectionTarget: Node | null;
+    projectionTarget: EventTarget | null;
     projectionStyle: string;
     response: Response;
     template: HTMLTemplateElement;
@@ -21,7 +21,7 @@ declare class HxResponseErrorEvent extends Event implements HxResponseErrorEvent
 declare class HxResponseEvent extends Event implements HxResponseEventInterface {
     #private;
     constructor(params: HxResponseEventParams, eventInit?: EventInit);
-    get projectionTarget(): Node;
+    get projectionTarget(): EventTarget;
     get projectionStyle(): string;
     get response(): Response;
     get template(): HTMLTemplateElement;

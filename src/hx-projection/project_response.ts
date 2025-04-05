@@ -1,16 +1,17 @@
 import { HxResponseEvent } from "../hx-response/mod.js";
 
 interface HxProjectEventImpl {
-	projectionTarget: Node;
+	projectionTarget: EventTarget;
 	projectedFragment: Node;
 	projectionStyle: string;
+	disconnectedFragment?: Node;
 }
 
 interface HxProjectEventParams {
-	projectionTarget: Node;
+	projectionTarget: EventTarget;
 	projectionStyle: string;
 	projectedFragment: Node;
-	disconnectedFragment: Node;
+	disconnectedFragment?: Node;
 }
 
 class HxProjectEvent extends Event implements HxProjectEventImpl {
@@ -25,19 +26,19 @@ class HxProjectEvent extends Event implements HxProjectEventImpl {
 		this.#params = params;
 	}
 
-	get projectionTarget(): Node {
+	get projectionTarget() {
 		return this.#params.projectionTarget;
 	}
 
-	get projectedFragment(): Node {
+	get projectedFragment() {
 		return this.#params.projectedFragment;
 	}
 
-	get disconnectedFragment(): Node | undefined {
+	get disconnectedFragment() {
 		return this.#params.projectedFragment;
 	}
 
-	get projectionStyle(): string {
+	get projectionStyle() {
 		return this.#params.projectionStyle;
 	}
 }
@@ -45,7 +46,7 @@ class HxProjectEvent extends Event implements HxProjectEventImpl {
 type PlacementResults = [Node | undefined, Node | undefined];
 
 function projectPlacement(
-	projectionTarget: Node,
+	projectionTarget: EventTarget,
 	template: HTMLTemplateElement,
 	projectionStyle: string,
 ): PlacementResults {
@@ -53,37 +54,36 @@ function projectPlacement(
 
 	let results: PlacementResults = [fragment, undefined];
 
-	if ("start" === projectionStyle) {
-		projectionTarget.insertBefore(fragment, projectionTarget.firstChild);
-	}
-	if ("end" === projectionStyle) {
-		projectionTarget.appendChild(fragment);
-	}
-
-	const { parentElement } = projectionTarget;
-	if (parentElement) {
-		if ("replace" === projectionStyle) {
-			parentElement.replaceChild(fragment, projectionTarget);
-		}
-		if ("remove" === projectionStyle) {
-			parentElement.removeChild(projectionTarget);
-		}
-		if ("before" === projectionStyle)
-			parentElement.insertBefore(fragment, projectionTarget);
-		if ("after" === projectionStyle)
-			parentElement.insertBefore(fragment, projectionTarget.nextSibling);
-	}
-
 	if (
 		projectionTarget instanceof Element ||
 		projectionTarget instanceof Document ||
 		projectionTarget instanceof DocumentFragment
 	) {
+		if ("start" === projectionStyle) {
+			projectionTarget.insertBefore(fragment, projectionTarget.firstChild);
+		}
+		if ("end" === projectionStyle) {
+			projectionTarget.appendChild(fragment);
+		}
 		if ("replace_children" === projectionStyle) {
 			projectionTarget.replaceChildren(fragment);
 		}
 		if ("remove_children" === projectionStyle) {
 			projectionTarget.replaceChildren();
+		}
+
+		const { parentElement } = projectionTarget;
+		if (parentElement) {
+			if ("replace" === projectionStyle) {
+				parentElement.replaceChild(fragment, projectionTarget);
+			}
+			if ("remove" === projectionStyle) {
+				parentElement.removeChild(projectionTarget);
+			}
+			if ("before" === projectionStyle)
+				parentElement.insertBefore(fragment, projectionTarget);
+			if ("after" === projectionStyle)
+				parentElement.insertBefore(fragment, projectionTarget.nextSibling);
 		}
 	}
 

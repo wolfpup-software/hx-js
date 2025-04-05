@@ -1,12 +1,12 @@
 interface HxResponseEventInterface {
-	projectionTarget: Node | null;
+	projectionTarget: EventTarget | null;
 	projectionStyle: string;
 	response: Response;
 	template: HTMLTemplateElement;
 }
 
 interface HxResponseEventParams {
-	projectionTarget: Node | null;
+	projectionTarget: EventTarget | null;
 	projectionStyle: string;
 	response: Response;
 	template: HTMLTemplateElement;

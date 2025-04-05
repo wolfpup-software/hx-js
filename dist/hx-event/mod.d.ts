@@ -1,5 +1,5 @@
 export type { HxEventInterface };
-export { dispatchHxEvent, dispatchHxOnSubmit, HxEvent };
+export { dispatchHxEvent, dispatchHxFromForm, HxEvent };
 interface HxEventInterface extends Event {
     action: string;
     typeAction: string;
@@ -13,4 +13,4 @@ declare class HxEvent extends Event implements HxEvent {
     get typeAction(): string;
 }
 declare function dispatchHxEvent(e: Event): void;
-declare function dispatchHxOnSubmit(e: Event): void;
+declare function dispatchHxFromForm(e: Event): void;
