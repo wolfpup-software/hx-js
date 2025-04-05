@@ -67,6 +67,16 @@ function setThrottler(throttler, throttleTarget, abortController) {
     if (throttleTarget)
         throttler.set(throttleTarget, abortController);
 }
+function dangerouslyBuildTemplate(response, text) {
+    let contentType = response.headers.get("content-type");
+    // maybe fail silently?
+    if ("text/html; charset=utf-8" !== contentType) {
+        throw new Error(`unexpected content-type: ${contentType}`);
+    }
+    const templateEl = document.createElement("template");
+    templateEl.innerHTML = text;
+    return templateEl;
+}
 function fetchAndDispatchResponseEvent(target, request, signal, projectionStyle, projectionTarget) {
     fetch(request, {
         signal,
@@ -75,8 +85,7 @@ function fetchAndDispatchResponseEvent(target, request, signal, projectionStyle,
         return Promise.all([response, response.text()]);
     })
         .then(function ([response, body]) {
-        let template = document.createElement("template");
-        template.innerHTML = body;
+        let template = dangerouslyBuildTemplate(response, body);
         let event = new HxResponseEvent({
             template,
             response,

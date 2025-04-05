@@ -1,8 +1,6 @@
 interface HxProjectEventImpl {
-    sourceEvent: Event;
     node: Node | undefined;
     fragment: Node | undefined;
-    error: unknown;
 }
 declare class HxProjectEvent extends Event implements HxProjectEventImpl {
     sourceEvent: Event;

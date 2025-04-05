@@ -1,5 +1,5 @@
 declare class HxProject {
-    constructor();
-    onHxResponse(e: Event): void;
+	constructor();
+	onHxResponse(e: Event): void;
 }
 export { HxProject };

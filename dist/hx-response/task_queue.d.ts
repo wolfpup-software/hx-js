@@ -1,5 +1,5 @@
 declare class TaskQueue {
-    #private;
-    enqueue(e: Promise<void>): void;
+	#private;
+	enqueue(e: Promise<void>): void;
 }
 export { TaskQueue };

@@ -1,3 +1,4 @@
+import { HxResponseEvent } from "../hx-response/mod.js";
 class HxProjectEvent extends Event {
     sourceEvent;
     node;
@@ -11,100 +12,43 @@ class HxProjectEvent extends Event {
         this.sourceEvent = sourceEvent;
     }
 }
-class HxProjectError extends Error {
-}
-function projectPlacement(e, targetNode, fragment) {
-    if (!(e.target instanceof Element))
+function projectPlacement(projectionTarget, template, projectionStyle) {
+    let fragment = template.content.cloneNode(true);
+    if ("none" === projectionStyle)
         return;
-    const placement = e.target.getAttribute(":projection");
-    if ("none" === placement)
-        return targetNode;
-    if ("start" === placement)
-        return targetNode.insertBefore(fragment, targetNode.firstChild);
-    if ("end" === placement)
-        return targetNode.appendChild(fragment);
-    const parent = targetNode.parentElement;
-    if (parent) {
-        if ("replace" === placement)
-            return parent.replaceChild(fragment, targetNode);
-        if ("remove" === placement)
-            return parent.removeChild(targetNode);
-        if ("before" === placement)
-            return parent.insertBefore(fragment, targetNode);
-        if ("after" === placement)
-            return parent.insertBefore(fragment, targetNode.nextSibling);
+    if ("start" === projectionStyle)
+        return projectionTarget.insertBefore(fragment, projectionTarget.firstChild);
+    if ("end" === projectionStyle)
+        return projectionTarget.appendChild(fragment);
+    const { parentElement } = projectionTarget;
+    if (parentElement) {
+        if ("replace" === projectionStyle)
+            return parentElement.replaceChild(fragment, projectionTarget);
+        if ("remove" === projectionStyle)
+            return parentElement.removeChild(projectionTarget);
+        if ("before" === projectionStyle)
+            return parentElement.insertBefore(fragment, projectionTarget);
+        if ("after" === projectionStyle)
+            return parentElement.insertBefore(fragment, projectionTarget.nextSibling);
     }
-    if (targetNode instanceof Element ||
-        targetNode instanceof Document ||
-        targetNode instanceof DocumentFragment) {
-        if ("remove_children" === placement) {
-            targetNode.replaceChildren();
-            return targetNode;
+    if (projectionTarget instanceof Element ||
+        projectionTarget instanceof Document ||
+        projectionTarget instanceof DocumentFragment) {
+        if ("replace_children" === projectionStyle) {
+            projectionTarget.replaceChildren(fragment);
+            return projectionTarget;
         }
-        if ("replace_children" === placement) {
-            targetNode.replaceChildren(fragment);
-            return targetNode;
+        if ("remove_children" === projectionStyle) {
+            projectionTarget.replaceChildren();
+            return projectionTarget;
         }
     }
-    // maybe fail silently?
-    throw new HxProjectError("unknown :projection attribute");
-}
-function getTarget(e) {
-    if (!(e.target instanceof Element))
-        return;
-    // ?? ify logic
-    // const selector = e.target.getAttribute("target") || "_document";
-    // e.currentTarget
-    const selector = e.target.getAttribute("target") || "_currentTarget";
-    if ("_target" === selector)
-        return e.target;
-    if ("_document" === selector)
-        return document;
-    // if (e.currentTarget === null) {
-    // 	if ("_currentTarget" === selector) return document;
-    // 	return document.querySelector(selector);
-    // }
-    // if (e.currentTarget instanceof Element) {
-    // 	if ("_currentTarget" === selector) return e.currentTarget;
-    // 	return e.currentTarget.querySelector(selector);
-    // }
-}
-function dangerouslyBuildTemplate(response, text) {
-    let contentType = response.headers.get("content-type");
-    if ("text/html; charset=utf-8" !== contentType) {
-        // maybe fail silently?
-        throw new HxProjectError(`unexpected content-type: ${contentType}`);
-    }
-    const templateEl = document.createElement("template");
-    templateEl.innerHTML = text;
-    return templateEl.content.cloneNode(true);
 }
 function dispatchHxProjection(e) {
+    if (!(e instanceof HxResponseEvent))
+        return;
     console.log(e);
-    // if (!(e instanceof HxResponseEvent) || e.error || !e.response) return;
-    // if (
-    // 	!(
-    // 		e.target instanceof HTMLAnchorElement ||
-    // 		e.target instanceof HTMLFormElement
-    // 	)
-    // )
-    // 	return;
-    // const text = await e.response.text();
-    // queueMicrotask(function () {
-    // 	const event = new HxProjectEvent(e);
-    // 	try {
-    // 		event.node = getTarget(e);
-    // 		if (event.node)
-    // 			event.fragment = dangerouslyBuildTemplate(e.response, text);
-    // 		if (event.fragment) projectPlacement(e, event.node, event.fragment);
-    // 	} catch (err: unknown) {
-    // 		event.error = err;
-    // 	}
-    // 	if (e.target instanceof Element) {
-    // 		const status = event.error ? "projection-error" : "projected";
-    // 		e.target.setAttribute("hx-status", status);
-    // 	}
-    // 	e.target.dispatchEvent(event);
-    // });
+    let { projectionStyle, projectionTarget, template } = e;
+    projectPlacement(projectionTarget, template, projectionStyle);
 }
 export { dispatchHxProjection, HxProjectEvent };
