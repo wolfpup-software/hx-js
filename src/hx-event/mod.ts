@@ -3,26 +3,33 @@ export { dispatchHxEvent, dispatchHxOnSubmit, HxEvent };
 
 interface HxEventInterface extends Event {
 	action: string;
+	typeAction: string;
 	sourceEvent: Event;
 }
 
 class HxEvent extends Event implements HxEvent {
 	#action: string;
+	#typeAction: string;
 	#sourceEvent: Event;
 
 	constructor(e: Event, action: string) {
 		super(`:${e.type}`, { bubbles: true, composed: true });
 
 		this.#action = action;
+		this.#typeAction = `:${e.type}:${action}`;
 		this.#sourceEvent = e;
+	}
+
+	get sourceEvent(): Event {
+		return this.#sourceEvent;
 	}
 
 	get action(): string {
 		return this.#action;
 	}
 
-	get sourceEvent(): Event {
-		return this.#sourceEvent;
+	get typeAction(): string {
+		return this.#typeAction;
 	}
 }
 

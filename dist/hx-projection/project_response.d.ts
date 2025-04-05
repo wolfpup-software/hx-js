@@ -1,13 +1,21 @@
 interface HxProjectEventImpl {
-    node: Node | undefined;
-    fragment: Node | undefined;
+    projectionTarget: Node;
+    projectedFragment: Node;
+    projectionStyle: string;
+}
+interface HxProjectEventParams {
+    projectionTarget: Node;
+    projectionStyle: string;
+    projectedFragment: Node;
+    disconnectedFragment: Node;
 }
 declare class HxProjectEvent extends Event implements HxProjectEventImpl {
-    sourceEvent: Event;
-    node: Node | undefined;
-    fragment: Node | undefined;
-    error: unknown;
-    constructor(sourceEvent: Event);
+    #private;
+    constructor(params: HxProjectEventParams);
+    get projectionTarget(): Node;
+    get projectedFragment(): Node;
+    get disconnectedFragment(): Node | undefined;
+    get projectionStyle(): string;
 }
 declare function dispatchHxProjection(e: Event): void;
 export type { HxProjectEventImpl };

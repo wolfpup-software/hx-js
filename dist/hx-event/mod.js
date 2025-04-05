@@ -1,17 +1,22 @@
 export { dispatchHxEvent, dispatchHxOnSubmit, HxEvent };
 class HxEvent extends Event {
     #action;
+    #typeAction;
     #sourceEvent;
     constructor(e, action) {
         super(`:${e.type}`, { bubbles: true, composed: true });
         this.#action = action;
+        this.#typeAction = `:${e.type}:${action}`;
         this.#sourceEvent = e;
+    }
+    get sourceEvent() {
+        return this.#sourceEvent;
     }
     get action() {
         return this.#action;
     }
-    get sourceEvent() {
-        return this.#sourceEvent;
+    get typeAction() {
+        return this.#typeAction;
     }
 }
 function getHxEvent(e, node) {

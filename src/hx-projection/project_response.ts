@@ -1,48 +1,77 @@
 import { HxResponseEvent } from "../hx-response/mod.js";
 
 interface HxProjectEventImpl {
-	node: Node | undefined;
-	fragment: Node | undefined;
+	projectionTarget: Node;
+	projectedFragment: Node;
+	projectionStyle: string;
+}
+
+interface HxProjectEventParams {
+	projectionTarget: Node;
+	projectionStyle: string;
+	projectedFragment: Node;
+	disconnectedFragment: Node;
 }
 
 class HxProjectEvent extends Event implements HxProjectEventImpl {
-	sourceEvent: Event;
-	node: Node | undefined;
-	fragment: Node | undefined;
-	error: unknown;
+	#params: HxProjectEventParams;
 
-	constructor(sourceEvent: Event) {
-		super(":project", {
+	constructor(params: HxProjectEventParams) {
+		super(":projection", {
 			bubbles: true,
-			composed: sourceEvent.composed,
+			composed: true,
 		});
 
-		this.sourceEvent = sourceEvent;
+		this.#params = params;
+	}
+
+	get projectionTarget(): Node {
+		return this.#params.projectionTarget;
+	}
+
+	get projectedFragment(): Node {
+		return this.#params.projectedFragment;
+	}
+
+	get disconnectedFragment(): Node | undefined {
+		return this.#params.projectedFragment;
+	}
+
+	get projectionStyle(): string {
+		return this.#params.projectionStyle;
 	}
 }
+
+type PlacementResults = [Node | undefined, Node | undefined];
 
 function projectPlacement(
 	projectionTarget: Node,
 	template: HTMLTemplateElement,
 	projectionStyle: string,
-): Node | undefined {
+): PlacementResults {
 	let fragment = template.content.cloneNode(true);
 
-	if ("none" === projectionStyle) return;
-	if ("start" === projectionStyle)
-		return projectionTarget.insertBefore(fragment, projectionTarget.firstChild);
-	if ("end" === projectionStyle) return projectionTarget.appendChild(fragment);
+	let results: PlacementResults = [fragment, undefined];
+
+	if ("start" === projectionStyle) {
+		projectionTarget.insertBefore(fragment, projectionTarget.firstChild);
+	}
+	if ("end" === projectionStyle) {
+		projectionTarget.appendChild(fragment);
+	}
 
 	const { parentElement } = projectionTarget;
 	if (parentElement) {
-		if ("replace" === projectionStyle)
-			return parentElement.replaceChild(fragment, projectionTarget);
-		if ("remove" === projectionStyle)
-			return parentElement.removeChild(projectionTarget);
+		if ("replace" === projectionStyle) {
+			parentElement.replaceChild(fragment, projectionTarget);
+		}
+		if ("remove" === projectionStyle) {
+			parentElement.removeChild(projectionTarget);
+		}
 		if ("before" === projectionStyle)
-			return parentElement.insertBefore(fragment, projectionTarget);
+			parentElement.insertBefore(fragment, projectionTarget);
 		if ("after" === projectionStyle)
-			return parentElement.insertBefore(fragment, projectionTarget.nextSibling);
+			parentElement.insertBefore(fragment, projectionTarget.nextSibling);
 	}
 
 	if (
@@ -52,23 +81,34 @@ function projectPlacement(
 	) {
 		if ("replace_children" === projectionStyle) {
 			projectionTarget.replaceChildren(fragment);
-			return projectionTarget;
 		}
 		if ("remove_children" === projectionStyle) {
 			projectionTarget.replaceChildren();
-			return projectionTarget;
 		}
 	}
+
+	return results;
 }
 
 function dispatchHxProjection(e: Event) {
 	if (!(e instanceof HxResponseEvent)) return;
 
-	console.log(e);
-
 	let { projectionStyle, projectionTarget, template } = e;
 
-	projectPlacement(projectionTarget, template, projectionStyle);
+	let [projectedFragment, disconnectedFragment] = projectPlacement(
+		projectionTarget,
+		template,
+		projectionStyle,
+	);
+
+	e.target.dispatchEvent(
+		new HxProjectEvent({
+			projectionTarget,
+			projectedFragment,
+			disconnectedFragment,
+			projectionStyle,
+		}),
+	);
 }
 
 export type { HxProjectEventImpl };

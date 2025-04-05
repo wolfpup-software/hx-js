@@ -8,8 +8,6 @@
 
 ## Install
 
-Add `hx-js` to an `html` document.
-
 ```html
 npm install https://github.com/wolfpup-software/hx-js
 ```
@@ -18,9 +16,11 @@ npm install https://github.com/wolfpup-software/hx-js
 
 ### Events
 
-Buttons and forms with an `hx-event` attribute will dispatch an `HxEvent`.
+#### Syntax
 
-Afterwards, UI data can be extracted from buttons and input elements.
+Hx listens for common interaction events like `click` and `keydown`.
+
+In the example below, elements with an `:` attribute will dispatch an `HxEvent`.
 
 ```html
 <button :="increment">+1</button>
@@ -34,20 +34,30 @@ Afterwards, UI data can be extracted from buttons and input elements.
 </form>
 ```
 
-Elements _without_ the the `hx-event` attribute behave like normal `<button>` and `<input>` and `<form>` elements.
+#### HxEvent
+
+Hx will dispatch an `HxEvent` on all elements with a `:` property in the composed path of an event. The `:` property defines an "action".
+
+A new event will dispatched with `Event.type` defined as the original event type preceeded by a colon.
+
+So a `click` event becomes a `:click` event.
+
+And a `keydown` event becomes a `:keydown`.
+
+The `event.target` will always be the element with an action `:` property.
+HxEvents have a corresponding property `HxEvent.action`. They also have a property called `HxEvent.typeAction` that combines the event and the action:
+
+`:click:increment`;
+
+This makes it relatively easy to send `:click:increment` as an action to update state.
 
 ### Requests
 
-`<a>` and `<form>` elements with an `:projection` attribute fetch html `fragments` and update the dom.
-
-Projection is the process of placing UI fragments into the DOM.
+If `<a>` and `<form>` elements have a `:projection` attribute, Hx fetch an html fragment and project it into the dom.
 
 ```html
-<!-- Fetch HTML with :projection -->
-<!-- anchors -->
 <a href="/document/fragment" target="ul" :projection="start"> click me! </a>
 
-<!-- forms -->
 <form
 	action="/post/something"
 	method="post"
@@ -74,7 +84,9 @@ A `target` value can be:
 
 #### :projection
 
-The `:projection` property defines how a `fragment` is projected onto a `document` relative to the `target` element.
+Projection is the process of placing UI fragments into the DOM.
+
+The `:projection` property defines _how_ a `fragment` is projected onto a `document` relative to the `target` element.
 
 An `:projection` properties can have the following values:
 
