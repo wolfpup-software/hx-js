@@ -80,6 +80,7 @@ A `target` value can be:
 
 - `_target` -> the `target` property of an hx event.
 - `_document` -> the document
+- `_currentTarget` -> the `currentTarget` property of an hx event
 - any valid CSS selector.
 
 #### :projection
@@ -88,13 +89,13 @@ Projection is the process of placing UI fragments into the DOM.
 
 The `:projection` property defines _how_ a `fragment` is projected onto a `document` relative to the `target` element.
 
-An `:projection` properties can have the following values:
+A `:projection` properties can have the following values:
 
-- `none` -> nothing will happen
+- `none` -> do nothing
 - `before` -> insert a fragment before the target element
 - `after` -> insert a fragment after the target element
 - `remove` -> remove the target element
-- `replace` -> place the target element with a fragment
+- `replace` -> swap the target element with a fragment
 - `start` -> insert a fragment before the target element descendants
 - `end` -> append a fragment after the target element descendants
 - `remove_children` -> remove the target element descendants
@@ -102,15 +103,17 @@ An `:projection` properties can have the following values:
 
 #### :throttle
 
-The `:throttle` property defines how to cancel a request on an anchor or form element before a new request is fetched.
+The `:throttle` property defines how to cancel a request made by an anchor or form element before a new request is created.
 
-- `_target`
-- `_currentTarget`
-- `_projectionTarget`
-- `_document`
+- `_target` -> the `target` property of an hx event.
+- `_document` -> the document
+- `_currentTarget` -> the `currentTarget` property of an hx event
+- `_projectionTarget` -> the node used to project a fragment 
 - `none`
 
-The default value is `none`;
+The default value is `none`.
+
+If a `:throttle` node is associated with a pending fragment request, the request will be cancelled. A new request will be coupled to the `:throttle` node. 
 
 #### :status
 
@@ -160,26 +163,6 @@ The `:composed` attribute adds the `composed` property to an event allowing hx e
 	click me!
 </a>
 ```
-
-## Developer Experience
-
-`Hx` is designed to work _with_ the DOM.
-
-It's modular and easily extensible.
-
-In lieu of "expressive" apis, `Hx` staggers small hypertext jumps into a series of DOM events:
-
-- :request events
-- :response events
-- :projection events
-
-The `:request` module dispatches :request events from `<a>` and `<form>` elements with an `:projection` attribute.
-
-The `:response` module dispatches :response events after recieving valid :request events.
-
-The `:project` module dispatches an :project event after placing a fragment into a document or shadow dom.
-
-Every step is opt-in. Developers can listen to events, drop invalid requests, and react to projections.
 
 ## License
 
