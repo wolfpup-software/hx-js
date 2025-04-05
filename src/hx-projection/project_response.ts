@@ -1,134 +1,115 @@
 import { HxResponseEvent } from "../hx-response/mod.js";
 
 interface HxProjectEventImpl {
-	sourceEvent: Event;
-	node: Node | undefined;
-	fragment: Node | undefined;
-	error: unknown;
+	projectionTarget: EventTarget;
+	projectedFragment: Node;
+	projectionStyle: string;
+	disconnectedFragment?: Node;
+}
+
+interface HxProjectEventParams {
+	projectionTarget: EventTarget;
+	projectionStyle: string;
+	projectedFragment: Node;
+	disconnectedFragment?: Node;
 }
 
 class HxProjectEvent extends Event implements HxProjectEventImpl {
-	sourceEvent: Event;
-	node: Node | undefined;
-	fragment: Node | undefined;
-	error: unknown;
+	#params: HxProjectEventParams;
 
-	constructor(sourceEvent: Event) {
-		super("hx-project", {
+	constructor(params: HxProjectEventParams) {
+		super(":projection", {
 			bubbles: true,
-			composed: sourceEvent.composed,
+			composed: true,
 		});
 
-		this.sourceEvent = sourceEvent;
+		this.#params = params;
+	}
+
+	get projectionTarget() {
+		return this.#params.projectionTarget;
+	}
+
+	get projectedFragment() {
+		return this.#params.projectedFragment;
+	}
+
+	get disconnectedFragment() {
+		return this.#params.projectedFragment;
+	}
+
+	get projectionStyle() {
+		return this.#params.projectionStyle;
 	}
 }
 
-class HxProjectError extends Error {}
+type PlacementResults = [Node | undefined, Node | undefined];
 
 function projectPlacement(
-	e: Event,
-	targetNode: Node,
-	fragment: Node,
-): Node | undefined {
-	if (!(e.target instanceof Element)) return;
+	projectionTarget: EventTarget,
+	template: HTMLTemplateElement,
+	projectionStyle: string,
+): PlacementResults {
+	let fragment = template.content.cloneNode(true);
 
-	const placement = e.target.getAttribute("hx-projection");
-	if (placement === "none") return targetNode;
-	if (placement === "start")
-		return targetNode.insertBefore(fragment, targetNode.firstChild);
-	if (placement === "end") return targetNode.appendChild(fragment);
-
-	const parent = targetNode.parentElement;
-	if (parent) {
-		if (placement === "replace")
-			return parent.replaceChild(fragment, targetNode);
-		if (placement === "remove") return parent.removeChild(targetNode);
-		if (placement === "before")
-			return parent.insertBefore(fragment, targetNode);
-		if (placement === "after")
-			return parent.insertBefore(fragment, targetNode.nextSibling);
-	}
+	let results: PlacementResults = [fragment, undefined];
 
 	if (
-		targetNode instanceof Element ||
-		targetNode instanceof Document ||
-		targetNode instanceof DocumentFragment
+		projectionTarget instanceof Element ||
+		projectionTarget instanceof Document ||
+		projectionTarget instanceof DocumentFragment
 	) {
-		if (placement === "remove_children") {
-			targetNode.replaceChildren();
-			return targetNode;
+		if ("start" === projectionStyle) {
+			projectionTarget.insertBefore(fragment, projectionTarget.firstChild);
 		}
-		if (placement === "replace_children") {
-			targetNode.replaceChildren(fragment);
-			return targetNode;
+		if ("end" === projectionStyle) {
+			projectionTarget.appendChild(fragment);
+		}
+		if ("replace_children" === projectionStyle) {
+			projectionTarget.replaceChildren(fragment);
+		}
+		if ("remove_children" === projectionStyle) {
+			projectionTarget.replaceChildren();
+		}
+
+		const { parentElement } = projectionTarget;
+		if (parentElement) {
+			if ("replace" === projectionStyle) {
+				parentElement.replaceChild(fragment, projectionTarget);
+			}
+			if ("remove" === projectionStyle) {
+				parentElement.removeChild(projectionTarget);
+			}
+			if ("before" === projectionStyle)
+				parentElement.insertBefore(fragment, projectionTarget);
+			if ("after" === projectionStyle)
+				parentElement.insertBefore(fragment, projectionTarget.nextSibling);
 		}
 	}
 
-	throw new HxProjectError("unknown hx-projection attribute");
+	return results;
 }
 
-function getTarget(e: Event): Node | undefined {
-	if (!(e.target instanceof Element)) return;
+function dispatchHxProjection(e: Event) {
+	if (!(e instanceof HxResponseEvent)) return;
 
-	const selector = e.target.getAttribute("target") || "_currentTarget";
-	if (selector === "_target") return e.target;
-	if (selector === "_document") return document;
+	let { projectionStyle, projectionTarget, template } = e;
 
-	if (e.currentTarget === null) {
-		if (selector === "_currentTarget") return document;
-		return document.querySelector(selector);
-	}
+	let [projectedFragment, disconnectedFragment] = projectPlacement(
+		projectionTarget,
+		template,
+		projectionStyle,
+	);
 
-	if (e.currentTarget instanceof Element) {
-		if (selector === "_currentTarget") return e.currentTarget;
-		return e.currentTarget.querySelector(selector);
-	}
-}
-
-function dangerouslyBuildTemplate(response: Response, text: string): Node {
-	let contentType = response.headers.get("content-type");
-	if (contentType !== "text/html; charset=utf-8") {
-		throw new HxProjectError(`unexpected content-type: ${contentType}`);
-	}
-
-	const templateEl = document.createElement("template");
-	templateEl.innerHTML = text;
-
-	return templateEl.content.cloneNode(true);
-}
-
-async function projectHxResponse(e: Event) {
-	if (!(e instanceof HxResponseEvent) || e.error || !e.response) return;
-	if (
-		!(
-			e.target instanceof HTMLAnchorElement ||
-			e.target instanceof HTMLFormElement
-		)
-	)
-		return;
-
-	const text = await e.response.text();
-
-	queueMicrotask(function () {
-		const event = new HxProjectEvent(e);
-
-		try {
-			event.node = getTarget(e);
-			if (event.node)
-				event.fragment = dangerouslyBuildTemplate(e.response, text);
-			if (event.fragment) projectPlacement(e, event.node, event.fragment);
-		} catch (err: unknown) {
-			event.error = err;
-		}
-
-		if (e.target instanceof Element) {
-			const status = event.error ? "projection-error" : "projected";
-			e.target.setAttribute("hx-status", status);
-		}
-
-		e.target.dispatchEvent(event);
-	});
+	e.target.dispatchEvent(
+		new HxProjectEvent({
+			projectionTarget,
+			projectedFragment,
+			disconnectedFragment,
+			projectionStyle,
+		}),
+	);
 }
 
 export type { HxProjectEventImpl };
-export { projectHxResponse, HxProjectEvent };
+export { dispatchHxProjection, HxProjectEvent };

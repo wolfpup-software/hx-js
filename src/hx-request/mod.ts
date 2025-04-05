@@ -1,37 +1,49 @@
-interface HxRequestEventImpl extends Event {
-	sourceEvent: Event;
-}
+export { dispatchHxRequestFromAnchor, dispatchHxRequestOnSubmit };
 
-class HxRequestEvent extends Event implements HxRequestEventImpl {
-	sourceEvent: Event;
-	constructor(e: Event, composed: boolean) {
-		super("hx-request", { bubbles: true, composed });
-		this.sourceEvent = e;
+// ANCHORS
+function getHxRequestEvent(eventTarget: EventTarget): Event {
+	if (
+		eventTarget instanceof HTMLAnchorElement &&
+		eventTarget.hasAttribute(":projection")
+	) {
+		return new Event(":request", {
+			bubbles: true,
+			composed: true,
+		});
 	}
 }
 
-function getHxElement(e: Event): Element | undefined {
-	if (!(e.target instanceof Element)) return;
-	if (e.target instanceof HTMLFormElement) return e.target;
-
-	let node: Element | null = e.target;
-	while (node && node !== e.currentTarget) {
-		if (node instanceof HTMLAnchorElement) return node;
-		node = node.parentElement;
+function dispatchHxRequestFromAnchor(e: Event): void {
+	for (let eventTarget of e.composedPath()) {
+		let event = getHxRequestEvent(eventTarget);
+		if (event) {
+			// assuming only happends on click to prevent browser fetch
+			e.preventDefault();
+			eventTarget.dispatchEvent(event);
+			return;
+		}
 	}
 }
 
-function onHx(e: Event): void {
-	let el = getHxElement(e);
-	if (el) {
-		if (!el.getAttribute("hx-projection")) return;
+// FORMS
+function getHxRequestEventFromForm(eventTarget: EventTarget): Event {
+	if (
+		eventTarget instanceof HTMLFormElement &&
+		eventTarget.hasAttribute(":projection")
+	) {
+		return new Event(":request", {
+			bubbles: true,
+			composed: true,
+		});
+	}
+}
 
+function dispatchHxRequestOnSubmit(e: Event): void {
+	let { target } = e;
+	let event = getHxRequestEventFromForm(target);
+	if (event) {
 		e.preventDefault();
-
-		let composed = el.getAttribute("hx-composed") !== null;
-		el.dispatchEvent(new HxRequestEvent(e, composed));
+		target.dispatchEvent(event);
+		return;
 	}
 }
-
-export type { HxRequestEventImpl };
-export { onHx, HxRequestEvent };

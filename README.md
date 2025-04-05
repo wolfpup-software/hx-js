@@ -1,4 +1,4 @@
-# hx-js
+# hex-js
 
 (H)ypertext e(x)tension for the browser.
 
@@ -8,32 +8,67 @@
 
 ## Install
 
-Add `hx-js` to an `html` document.
-
 ```html
 npm install https://github.com/wolfpup-software/hx-js
 ```
 
 ## How to use
 
-Anchor and form elements with an `hx-projection` attribute will fetch html `fragments` and update the dom.
+### Events
+
+#### Syntax
+
+Hx listens for common interaction events like `click` and `keydown`.
+
+In the example below, elements with an `:` attribute will dispatch an `HxEvent`.
 
 ```html
-<!-- anchors -->
-<a href="/document/fragment" target="ul" hx-projection="start"> click me! </a>
+<button :="increment">+1</button>
+<button :="decrement">-1</button>
 
-<!-- forms -->
+<input :="set_date" type="date" />
+
+<form :="update_form">
+	<input />
+	<input type="submit" />
+</form>
+```
+
+#### HxEvent
+
+Hx will dispatch an `HxEvent` on all elements with a `:` property in the composed path of an event. The `:` property defines an "action".
+
+A new event will dispatched with `Event.type` defined as the original event type preceeded by a colon.
+
+So a `click` event becomes a `:click` event.
+
+And a `keydown` event becomes a `:keydown`.
+
+The `event.target` will always be the element with an action `:` property.
+HxEvents have a corresponding property `HxEvent.action`. They also have a property called `HxEvent.typeAction` that combines the event and the action:
+
+`:click:increment`;
+
+This makes it relatively easy to send `:click:increment` as an action to update state.
+
+### Requests
+
+If `<a>` and `<form>` elements have a `:projection` attribute, Hx fetch an html fragment and project it into the dom.
+
+```html
+<a href="/document/fragment" target="ul" :projection="start"> click me! </a>
+
 <form
 	action="/post/something"
 	method="post"
 	target="li:last-child"
-	hx-projection="replace"
+	:projection="replace"
 >
 	<input type="submit" />
 </form>
 ```
 
-Elements _without_ the `hx-projection` attribute behave like normal `<a>` and `<form>` elements.
+Elements _without_ the `:projection` or attribute behave like normal `<a>` and `<form>` elements.
 
 ### Attributes
 
@@ -44,29 +79,45 @@ Elements _without_ the `hx-projection` attribute behave like normal `<a>` and `<
 A `target` value can be:
 
 - `_target` -> the `target` property of an hx event.
-- `_currentTarget` -> the `currentTarget` property for hx event
 - `_document` -> the document
+- `_currentTarget` -> the `currentTarget` property of an hx event
 - any valid CSS selector.
 
-#### hx-projection
+#### :projection
 
-The `hx-projection` property defines how a `fragment` is projected onto a `document` relative to the `target` element.
+Projection is the process of placing UI fragments into the DOM.
 
-An `hx-projection` properties can have the following values:
+The `:projection` property defines _how_ a `fragment` is projected onto a `document` relative to the `target` element.
 
-- `none` -> nothing will happen
+A `:projection` properties can have the following values:
+
+- `none` -> do nothing
 - `before` -> insert a fragment before the target element
 - `after` -> insert a fragment after the target element
 - `remove` -> remove the target element
-- `replace` -> place the target element with a fragment
+- `replace` -> swap the target element with a fragment
 - `start` -> insert a fragment before the target element descendants
 - `end` -> append a fragment after the target element descendants
 - `remove_children` -> remove the target element descendants
 - `replace_children` -> replace the target element descendants with a fragment
 
-#### hx-status
+#### :throttle
 
-The `hx-status` attribute is used to reflect the state of a hypertext request onto the original `<a>` or `<form>` element.
+The `:throttle` property defines how to cancel a request made by an anchor or form element before a new request is created.
+
+- `_target` -> the `target` property of an hx event.
+- `_document` -> the document
+- `_currentTarget` -> the `currentTarget` property of an hx event
+- `_projectionTarget` -> the node used to project a fragment
+- `none`
+
+The default value is `none`.
+
+If a `:throttle` node is associated with a pending fragment request, the request will be cancelled. A new request will be coupled to the `:throttle` node.
+
+#### :status
+
+The `:status` attribute is used to reflect the state of a hypertext request onto the original `<a>` or `<form>` element.
 
 The following values will be applied:
 
@@ -80,66 +131,38 @@ The following values will be applied:
 <a
 	href="/document/fragment"
 	target="ul"
-	hx-projection="start"
-	hx-status="requested"
+	:projection="start"
+	:status="requested"
 >
 	click me!
 </a>
 ```
 
-#### hx-status-code
+#### :status-code
 
-The `hx-status-code` attribute is used to signal request state to the original `<a>` or `<form>` element
+The `:status-code` attribute is used to signal request state to the original `<a>` or `<form>` element
 
 ```html
 <a
 	href="/document/fragment"
 	target="ul"
-	hx-projection="start"
-	hx-status="responded"
-	hx-status-code="200"
+	:projection="start"
+	*status="responded"
+	*status-code="200"
 >
 	click me!
 </a>
 ```
 
-#### hx-composed
+#### :composed
 
-The `hx-composed` attribute adds the `composed` property to an event allowing hx events to propagate through a shadow root.
+The `:composed` attribute adds the `composed` property to an event allowing hx events to propagate through a shadow root.
 
 ```html
-<a href="/document/fragment" target="ul" hx-projection="start" hx-composed>
+<a href="/document/fragment" target="ul" :projection="start" :composed>
 	click me!
 </a>
 ```
-
-## Developer Experience
-
-`Hx` is designed to work _with_ the DOM.
-
-It's modular and easily extensible.
-
-In lieu of "expressive" apis, `Hx` staggers small hypertext jumps into a series of DOM events:
-
-- hx-request events
-- hx-response events
-- hx-projection events
-
-The `hx-request` module dispatches hx-request events from `<a>` and `<form>` elements with an `hx-projection` attribute.
-
-The `hx-response` module dispatches hx-response events after recieving valid hx-request events.
-
-The `hx-project` module dispatches an hx-project event after placing a fragment into a document or shadow dom.
-
-Every step is opt-in. Pups can listen to events to drop invalid requests and react to projections.
-
-### Goals
-
-Deprecation by RFC. The browser should already be doing this.
-
-Maybe not the same events, maybe not the same attributes, but little hypertext jumps should already be browser spec.
-
-Until then, `hx` intends to be a polyfil (at 1.5kb minified, zipped).
 
 ## License
 
