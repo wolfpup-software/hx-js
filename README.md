@@ -108,12 +108,12 @@ The `:throttle` property defines how to cancel a request made by an anchor or fo
 - `_target` -> the `target` property of an hx event.
 - `_document` -> the document
 - `_currentTarget` -> the `currentTarget` property of an hx event
-- `_projectionTarget` -> the node used to project a fragment 
+- `_projectionTarget` -> the node used to project a fragment
 - `none`
 
 The default value is `none`.
 
-If a `:throttle` node is associated with a pending fragment request, the request will be cancelled. A new request will be coupled to the `:throttle` node. 
+If a `:throttle` node is associated with a pending fragment request, the request will be cancelled. A new request will be coupled to the `:throttle` node.
 
 #### :status
 
