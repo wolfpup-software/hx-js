@@ -3,56 +3,64 @@ export { dispatchHxEvent, dispatchHxFromForm, HxEvent };
 
 interface HxEventInterface extends Event {
 	action: string;
-	typeAction: string;
 	sourceEvent: Event;
 }
 
 class HxEvent extends Event implements HxEvent {
 	#action: string;
-	#typeAction: string;
+	#actionType: string;
 	#sourceEvent: Event;
 
-	constructor(e: Event, action: string) {
-		super(`:${e.type}`, { bubbles: true, composed: true });
+	constructor(e: Event, type: string, action: string) {
+		super("@event", { bubbles: true, composed: true });
 
 		this.#action = action;
-		this.#typeAction = `:${e.type}:${action}`;
+		this.#actionType = type;
 		this.#sourceEvent = e;
-	}
-
-	get sourceEvent(): Event {
-		return this.#sourceEvent;
 	}
 
 	get action(): string {
 		return this.#action;
 	}
 
-	get typeAction(): string {
-		return this.#typeAction;
+	get actionType(): string {
+		return this.#actionType;
+	}
+
+	get sourceEvent(): Event {
+		return this.#sourceEvent;
 	}
 }
 
-function getHxEvent(e: Event, node: EventTarget): Event | undefined {
-	// start with any elements
-	// maybe only inputs buttons forms?
+function getAtmark(eventType: string) {
+	return `.${eventType}`;
+}
+
+function getHxEvent(
+	e: Event,
+	type: string,
+	node: EventTarget,
+): Event | undefined {
 	if (node instanceof Element) {
-		let action = node.getAttribute(":");
-		if (action) return new HxEvent(e, action);
+		let action = node.getAttribute(type);
+		if (action) return new HxEvent(e, type, action);
 	}
 }
 
 function dispatchHxEvent(e: Event): void {
+	let type = getAtmark(e.type);
+
 	for (let node of e.composedPath()) {
-		let event = getHxEvent(e, node);
+		let event = getHxEvent(e, type, node);
 		if (event) node.dispatchEvent(event);
 	}
 }
 
 function getHxEventFromForm(e: Event): Event | undefined {
 	if (e.target instanceof HTMLFormElement) {
-		let action = e.target.getAttribute(":");
-		if (action) return new HxEvent(e, action);
+		let type = getAtmark(e.type);
+		let action = e.target.getAttribute(type);
+		if (action) return new HxEvent(e, type, action);
 	}
 }
 

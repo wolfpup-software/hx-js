@@ -23,26 +23,28 @@ Hx listens for common interaction events like `click` and `keydown`.
 In the example below, elements with an `:` attribute will dispatch an `HxEvent`.
 
 ```html
-<button :="increment">+1</button>
-<button :="decrement">-1</button>
+<input type="date" @input="set_date" @pointermove="update_cursor" />
 
-<input :="set_date" type="date" />
+<button @click="decrement_count">-1</button>
+<button @click="increment_count">+1</button>
 
-<form :="update_form">
+<form @submit="update_form">
 	<input />
 	<input type="submit" />
 </form>
 ```
 
+update_form
+
 #### HxEvent
 
 Hx will dispatch an `HxEvent` on all elements with a `:` property in the composed path of an event. The `:` property defines an "action".
 
-A new event will dispatched with `Event.type` defined as the original event type preceeded by a colon.
+A new event will dispatched with `Event.type` defined as the original event type preceeded by a atmark.
 
-So a `click` event becomes a `:click` event.
+So a `click` event becomes a `@click` event.
 
-And a `keydown` event becomes a `:keydown`.
+And a `keydown` event becomes a `@keydown`.
 
 The `event.target` will always be the element with an action `:` property.
 HxEvents have a corresponding property `HxEvent.action`. They also have a property called `HxEvent.typeAction` that combines the event and the action:
@@ -109,57 +111,31 @@ The `:throttle` property defines how to cancel a request made by an anchor or fo
 - `_document` -> the document
 - `_currentTarget` -> the `currentTarget` property of an hx event
 - `_projectionTarget` -> the node used to project a fragment
-- `none`
+- `none` -> no target provided
 
-The default value is `none`.
+The fallback value is `none`.
 
 If a `:throttle` node is associated with a pending fragment request, the request will be cancelled. A new request will be coupled to the `:throttle` node.
 
-#### :status
+#### :response-state
 
-The `:status` attribute is used to reflect the state of a hypertext request onto the original `<a>` or `<form>` element.
+The `:response-state` attribute is used to reflect the state of a hypertext request onto the original `<a>` or `<form>` element and the projected target element.
 
 The following values will be applied:
 
-- requested
-- response-error
-- responded
-- projection-error
-- projected
+- pending
+- fulfilled
+- rejected
+
+They directly reflect promise state definitions.
 
 ```html
 <a
 	href="/document/fragment"
 	target="ul"
 	:projection="start"
-	:status="requested"
+	:response-state="pending"
 >
-	click me!
-</a>
-```
-
-#### :status-code
-
-The `:status-code` attribute is used to signal request state to the original `<a>` or `<form>` element
-
-```html
-<a
-	href="/document/fragment"
-	target="ul"
-	:projection="start"
-	*status="responded"
-	*status-code="200"
->
-	click me!
-</a>
-```
-
-#### :composed
-
-The `:composed` attribute adds the `composed` property to an event allowing hx events to propagate through a shadow root.
-
-```html
-<a href="/document/fragment" target="ul" :projection="start" :composed>
 	click me!
 </a>
 ```

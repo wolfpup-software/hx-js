@@ -6,7 +6,7 @@ function getHxRequestEvent(eventTarget: EventTarget): Event {
 		eventTarget instanceof HTMLAnchorElement &&
 		eventTarget.hasAttribute(":projection")
 	) {
-		return new Event(":request", {
+		return new Event("@request", {
 			bubbles: true,
 			composed: true,
 		});
@@ -31,7 +31,7 @@ function getHxRequestEventFromForm(eventTarget: EventTarget): Event {
 		eventTarget instanceof HTMLFormElement &&
 		eventTarget.hasAttribute(":projection")
 	) {
-		return new Event(":request", {
+		return new Event("@request", {
 			bubbles: true,
 			composed: true,
 		});
