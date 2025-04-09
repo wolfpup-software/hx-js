@@ -4,38 +4,45 @@
 		<meta charset=utf-8 />
 		<meta name=viewport content="width=device-width, initial-scale=1" />
 		<script type=module src="../../dist/api/mod.js"></script>
+		<!-- <script type=module src="./mod.js"></script> -->
+
+		<style>
+
+		</style>
 	</head>
 	<body>
 		<header></header>
 		<main>
 			<ul>
 				<li>
-					<a href="./bear.html" target="section" :projection="start">
+					<a href="./bear.html" target="section" hx-projection="replace_children">
 						<button>bear</button>
 					</a>
 				</li>
 				<li>
-					<a href="./crow.html" target="section" :projection="start">
+					<a href="./crow.html" target="section" hx-projection="replace_children">
 						<button>crow</button>
 					</a>
 				</li>
 				<li>
-					<a href="./fox.html" target="section" :projection="start">
+					<a href="./fox.html" target="section" hx-projection="replace_children">
 						<button>fox</button>
 					</a>
 				</li>
 				<li>
-					<a href="./wolf.html" target="section" :projection="start">
+					<a href="./wolf.html" target="section" hx-projection="replace_children">
 						<button>wolf</button>
 					</a>
 				</li>
 				<li>
-					<a href="./reset.html" target="section" :projection="remove_children">
+					<a href="./reset.html" target="section" hx-projection="replace_children">
 						<button>reset</button>
 					</a>
 				</li>
 			</ul>
-			<section></section>
+			<section>
+				<p>beasts tread softly underfoot.</p>
+			</section>
 		</main>
 		<footer></footer>
 	</body>

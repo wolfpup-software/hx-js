@@ -9,6 +9,7 @@ interface HxResponseEventParams {
     projectionStyle: string;
     response: Response;
     template: HTMLTemplateElement;
+    eventInit?: EventInit;
 }
 interface HxResponseErrorEventInterface {
     error: unknown;
@@ -20,7 +21,7 @@ declare class HxResponseErrorEvent extends Event implements HxResponseErrorEvent
 }
 declare class HxResponseEvent extends Event implements HxResponseEventInterface {
     #private;
-    constructor(params: HxResponseEventParams, eventInit?: EventInit);
+    constructor(params: HxResponseEventParams);
     get projectionTarget(): EventTarget;
     get projectionStyle(): string;
     get response(): Response;

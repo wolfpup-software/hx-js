@@ -1,9 +1,9 @@
 import { HxResponseEvent, HxResponseErrorEvent } from "./hx_response_event.js";
 function getProjectionStyle(el) {
-    return el.getAttribute(":projection");
+    return el.getAttribute("hx-projection");
 }
 function getProjectionTarget(e) {
-    let { target, currentTarget } = e;
+    let { target } = e;
     if (!(target instanceof Element))
         return null;
     const selector = target.getAttribute("target") || "_currentTarget";
@@ -11,6 +11,7 @@ function getProjectionTarget(e) {
         return document;
     if ("_target" === selector)
         return target;
+    let { currentTarget } = e;
     if ("_currentTarget" === selector)
         return currentTarget;
     if (currentTarget instanceof Document ||
@@ -23,7 +24,7 @@ function getThrottleTarget(e, projectionTarget) {
     let { target, currentTarget } = e;
     if (!(target instanceof Element))
         return null;
-    const selector = target.getAttribute(":throttle") || "none";
+    const selector = target.getAttribute("hx-throttle") || "none";
     if ("_projectionTarget" === selector)
         return projectionTarget;
     if ("_document" === selector)
@@ -34,7 +35,7 @@ function getThrottleTarget(e, projectionTarget) {
         return currentTarget;
 }
 function getTimeoutMs(el) {
-    let timeoutMsAttr = el.getAttribute(":timeout-ms");
+    let timeoutMsAttr = el.getAttribute("hx-timeout-ms");
     let timeoutMs = parseFloat(timeoutMsAttr);
     if (Number.isNaN(timeoutMs)) {
         timeoutMs = 5000;
@@ -69,7 +70,6 @@ function setThrottler(throttler, throttleTarget, abortController) {
 }
 function dangerouslyBuildTemplate(response, text) {
     let contentType = response.headers.get("content-type");
-    // maybe fail silently?
     if ("text/html; charset=utf-8" !== contentType) {
         throw new Error(`unexpected content-type: ${contentType}`);
     }
@@ -89,15 +89,15 @@ function fetchAndDispatchResponseEvent(target, request, signal, projectionStyle,
     })
         .then(function (response) {
         if (hangarElement && targetElement) {
-            targetElement.setAttribute(":fetch-state", "pending");
-            hangarElement.setAttribute(":fetch-state", "pending");
+            targetElement.setAttribute("hx-fetch-state", "pending");
+            hangarElement.setAttribute("hx-fetch-state", "pending");
         }
         return Promise.all([response, response.text()]);
     })
         .then(function ([response, body]) {
         if (hangarElement && targetElement) {
-            targetElement.setAttribute(":fetch-state", "fulfilled");
-            hangarElement.setAttribute(":fetch-state", "fulfilled");
+            targetElement.setAttribute("hx-fetch-state", "fulfilled");
+            hangarElement.setAttribute("hx-fetch-state", "fulfilled");
         }
         let template = dangerouslyBuildTemplate(response, body);
         let event = new HxResponseEvent({
@@ -105,13 +105,14 @@ function fetchAndDispatchResponseEvent(target, request, signal, projectionStyle,
             response,
             projectionTarget,
             projectionStyle,
-        }, { bubbles: true, composed: true });
+            eventInit: { bubbles: true, composed: true },
+        });
         target.dispatchEvent(event);
     })
         .catch(function (reason) {
         if (hangarElement && targetElement) {
-            targetElement.setAttribute(":fetch-state", "rejected");
-            hangarElement.setAttribute(":fetch-state", "rejected");
+            targetElement.setAttribute("hx-fetch-state", "rejected");
+            hangarElement.setAttribute("hx-fetch-state", "rejected");
         }
         let event = new HxResponseErrorEvent(reason, {
             bubbles: true,

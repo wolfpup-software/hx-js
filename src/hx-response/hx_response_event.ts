@@ -10,6 +10,7 @@ interface HxResponseEventParams {
 	projectionStyle: string;
 	response: Response;
 	template: HTMLTemplateElement;
+	eventInit?: EventInit;
 }
 
 interface HxResponseErrorEventInterface {
@@ -35,8 +36,8 @@ class HxResponseErrorEvent
 class HxResponseEvent extends Event implements HxResponseEventInterface {
 	#params: HxResponseEventParams;
 
-	constructor(params: HxResponseEventParams, eventInit?: EventInit) {
-		super("#response", eventInit);
+	constructor(params: HxResponseEventParams) {
+		super("#response", params.eventInit);
 
 		this.#params = params;
 	}
