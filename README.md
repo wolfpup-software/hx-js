@@ -23,9 +23,6 @@ Hx listens for common interaction events like `click` and `keydown`.
 In the example below, elements with an `:` attribute will dispatch an `HxEvent`.
 
 ```html
-<input type="date" @input="set_date" @pointermove="update_cursor" />
-
-<button @click="decrement_count">-1</button>
 <button @click="increment_count">+1</button>
 
 <form @submit="update_form">

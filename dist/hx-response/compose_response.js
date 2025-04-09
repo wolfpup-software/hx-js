@@ -134,7 +134,6 @@ function composeResponse(throttler, e) {
     let projectionTarget = getProjectionTarget(e);
     let throttleTarget = getThrottleTarget(e, projectionTarget);
     setThrottler(throttler, throttleTarget, abortController);
-    // set request status on projection and target elements
     fetchAndDispatchResponseEvent(target, request, signal, projectionStyle, projectionTarget);
 }
 export { composeResponse };
