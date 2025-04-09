@@ -12,7 +12,7 @@ class HxEvent extends Event implements HxEvent {
 	#sourceEvent: Event;
 
 	constructor(e: Event, type: string, action: string) {
-		super("@event", { bubbles: true, composed: true });
+		super("#event", { bubbles: true, composed: true });
 
 		this.#action = action;
 		this.#actionType = type;
@@ -33,7 +33,7 @@ class HxEvent extends Event implements HxEvent {
 }
 
 function getAtmark(eventType: string) {
-	return `.${eventType}`;
+	return `@${eventType}`;
 }
 
 function getHxEvent(

@@ -4,7 +4,7 @@ class HxEvent extends Event {
     #actionType;
     #sourceEvent;
     constructor(e, type, action) {
-        super("@event", { bubbles: true, composed: true });
+        super("#event", { bubbles: true, composed: true });
         this.#action = action;
         this.#actionType = type;
         this.#sourceEvent = e;
@@ -20,7 +20,7 @@ class HxEvent extends Event {
     }
 }
 function getAtmark(eventType) {
-    return `.${eventType}`;
+    return `@${eventType}`;
 }
 function getHxEvent(e, type, node) {
     if (node instanceof Element) {
