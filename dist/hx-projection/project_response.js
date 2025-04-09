@@ -2,7 +2,7 @@ import { HxResponseEvent } from "../hx-response/mod.js";
 class HxProjectEvent extends Event {
     #params;
     constructor(params) {
-        super(":projection", {
+        super("#projection", {
             bubbles: true,
             composed: true,
         });

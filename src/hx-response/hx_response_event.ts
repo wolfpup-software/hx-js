@@ -23,7 +23,7 @@ class HxResponseErrorEvent
 	#error: unknown;
 
 	constructor(error: unknown, eventInit?: EventInit) {
-		super(":response-error", eventInit);
+		super("#response-error", eventInit);
 		this.#error = error;
 	}
 
@@ -36,7 +36,7 @@ class HxResponseEvent extends Event implements HxResponseEventInterface {
 	#params: HxResponseEventParams;
 
 	constructor(params: HxResponseEventParams, eventInit?: EventInit) {
-		super(":response", eventInit);
+		super("#response", eventInit);
 
 		this.#params = params;
 	}

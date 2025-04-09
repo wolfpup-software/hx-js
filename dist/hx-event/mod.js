@@ -1,19 +1,14 @@
 export { dispatchHxEvent, dispatchHxFromForm, HxEvent };
 class HxEvent extends Event {
     #action;
-    #actionType;
     #sourceEvent;
-    constructor(e, type, action) {
+    constructor(e, action) {
         super("#event", { bubbles: true, composed: true });
         this.#action = action;
-        this.#actionType = type;
         this.#sourceEvent = e;
     }
     get action() {
         return this.#action;
-    }
-    get actionType() {
-        return this.#actionType;
     }
     get sourceEvent() {
         return this.#sourceEvent;
@@ -26,7 +21,7 @@ function getHxEvent(e, type, node) {
     if (node instanceof Element) {
         let action = node.getAttribute(type);
         if (action)
-            return new HxEvent(e, type, action);
+            return new HxEvent(e, action);
     }
 }
 function dispatchHxEvent(e) {
@@ -42,7 +37,7 @@ function getHxEventFromForm(e) {
         let type = getAtmark(e.type);
         let action = e.target.getAttribute(type);
         if (action)
-            return new HxEvent(e, type, action);
+            return new HxEvent(e, action);
     }
 }
 function dispatchHxFromForm(e) {

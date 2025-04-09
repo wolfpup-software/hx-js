@@ -1,7 +1,7 @@
 class HxResponseErrorEvent extends Event {
     #error;
     constructor(error, eventInit) {
-        super(":response-error", eventInit);
+        super("#response-error", eventInit);
         this.#error = error;
     }
     get error() {
@@ -11,7 +11,7 @@ class HxResponseErrorEvent extends Event {
 class HxResponseEvent extends Event {
     #params;
     constructor(params, eventInit) {
-        super(":response", eventInit);
+        super("#response", eventInit);
         this.#params = params;
     }
     get projectionTarget() {

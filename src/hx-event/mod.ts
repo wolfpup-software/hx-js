@@ -8,23 +8,17 @@ interface HxEventInterface extends Event {
 
 class HxEvent extends Event implements HxEvent {
 	#action: string;
-	#actionType: string;
 	#sourceEvent: Event;
 
-	constructor(e: Event, type: string, action: string) {
+	constructor(e: Event, action: string) {
 		super("#event", { bubbles: true, composed: true });
 
 		this.#action = action;
-		this.#actionType = type;
 		this.#sourceEvent = e;
 	}
 
 	get action(): string {
 		return this.#action;
-	}
-
-	get actionType(): string {
-		return this.#actionType;
 	}
 
 	get sourceEvent(): Event {
@@ -43,7 +37,7 @@ function getHxEvent(
 ): Event | undefined {
 	if (node instanceof Element) {
 		let action = node.getAttribute(type);
-		if (action) return new HxEvent(e, type, action);
+		if (action) return new HxEvent(e, action);
 	}
 }
 
@@ -60,7 +54,7 @@ function getHxEventFromForm(e: Event): Event | undefined {
 	if (e.target instanceof HTMLFormElement) {
 		let type = getAtmark(e.type);
 		let action = e.target.getAttribute(type);
-		if (action) return new HxEvent(e, type, action);
+		if (action) return new HxEvent(e, action);
 	}
 }
 

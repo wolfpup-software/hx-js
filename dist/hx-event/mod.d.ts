@@ -6,9 +6,8 @@ interface HxEventInterface extends Event {
 }
 declare class HxEvent extends Event implements HxEvent {
     #private;
-    constructor(e: Event, type: string, action: string);
+    constructor(e: Event, action: string);
     get action(): string;
-    get actionType(): string;
     get sourceEvent(): Event;
 }
 declare function dispatchHxEvent(e: Event): void;
