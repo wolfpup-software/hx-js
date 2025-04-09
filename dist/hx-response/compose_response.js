@@ -78,13 +78,27 @@ function dangerouslyBuildTemplate(response, text) {
     return templateEl;
 }
 function fetchAndDispatchResponseEvent(target, request, signal, projectionStyle, projectionTarget) {
+    let hangarElement;
+    let targetElement;
+    if (projectionTarget instanceof Element && target instanceof Element) {
+        hangarElement = projectionTarget;
+        targetElement = target;
+    }
     fetch(request, {
         signal,
     })
         .then(function (response) {
+        if (hangarElement && targetElement) {
+            targetElement.setAttribute(":fetch-state", "pending");
+            hangarElement.setAttribute(":fetch-state", "pending");
+        }
         return Promise.all([response, response.text()]);
     })
         .then(function ([response, body]) {
+        if (hangarElement && targetElement) {
+            targetElement.setAttribute(":fetch-state", "fulfilled");
+            hangarElement.setAttribute(":fetch-state", "fulfilled");
+        }
         let template = dangerouslyBuildTemplate(response, body);
         let event = new HxResponseEvent({
             template,
@@ -95,6 +109,10 @@ function fetchAndDispatchResponseEvent(target, request, signal, projectionStyle,
         target.dispatchEvent(event);
     })
         .catch(function (reason) {
+        if (hangarElement && targetElement) {
+            targetElement.setAttribute(":fetch-state", "rejected");
+            hangarElement.setAttribute(":fetch-state", "rejected");
+        }
         let event = new HxResponseErrorEvent(reason, {
             bubbles: true,
             composed: true,

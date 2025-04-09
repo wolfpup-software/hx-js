@@ -13,14 +13,14 @@ class HxRequest {
         this.#el.addEventListener("click", dispatchHxRequestFromAnchor);
         // form submissions
         this.#el.addEventListener("submit", dispatchHxRequestOnSubmit);
-        this.#el.addEventListener(":request", this.#response.onHxRequest);
-        this.#el.addEventListener(":response", dispatchHxProjection);
+        this.#el.addEventListener("#request", this.#response.onHxRequest);
+        this.#el.addEventListener("#response", dispatchHxProjection);
     }
     disconnect() {
         this.#el.removeEventListener("click", dispatchHxRequestFromAnchor);
         this.#el.removeEventListener("submit", dispatchHxRequestOnSubmit);
-        this.#el.removeEventListener(":request", this.#response.onHxRequest);
-        this.#el.removeEventListener(":response", dispatchHxProjection);
+        this.#el.removeEventListener("#request", this.#response.onHxRequest);
+        this.#el.removeEventListener("#response", dispatchHxProjection);
     }
 }
 export { HxRequest };

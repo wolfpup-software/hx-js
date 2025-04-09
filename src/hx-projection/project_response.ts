@@ -18,7 +18,7 @@ class HxProjectEvent extends Event implements HxProjectEventImpl {
 	#params: HxProjectEventParams;
 
 	constructor(params: HxProjectEventParams) {
-		super(":projection", {
+		super("#projection", {
 			bubbles: true,
 			composed: true,
 		});

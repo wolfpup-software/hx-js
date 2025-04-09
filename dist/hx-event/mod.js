@@ -1,43 +1,41 @@
 export { dispatchHxEvent, dispatchHxFromForm, HxEvent };
 class HxEvent extends Event {
     #action;
-    #typeAction;
     #sourceEvent;
     constructor(e, action) {
-        super(`:${e.type}`, { bubbles: true, composed: true });
+        super("#event", { bubbles: true, composed: true });
         this.#action = action;
-        this.#typeAction = `:${e.type}:${action}`;
         this.#sourceEvent = e;
-    }
-    get sourceEvent() {
-        return this.#sourceEvent;
     }
     get action() {
         return this.#action;
     }
-    get typeAction() {
-        return this.#typeAction;
+    get sourceEvent() {
+        return this.#sourceEvent;
     }
 }
-function getHxEvent(e, node) {
-    // start with any elements
-    // maybe only inputs buttons forms?
+function getAtmark(eventType) {
+    return `@${eventType}`;
+}
+function getHxEvent(e, type, node) {
     if (node instanceof Element) {
-        let action = node.getAttribute(":");
+        let action = node.getAttribute(type);
         if (action)
             return new HxEvent(e, action);
     }
 }
 function dispatchHxEvent(e) {
+    let type = getAtmark(e.type);
     for (let node of e.composedPath()) {
-        let event = getHxEvent(e, node);
+        let event = getHxEvent(e, type, node);
         if (event)
             node.dispatchEvent(event);
     }
 }
 function getHxEventFromForm(e) {
     if (e.target instanceof HTMLFormElement) {
-        let action = e.target.getAttribute(":");
+        let type = getAtmark(e.type);
+        let action = e.target.getAttribute(type);
         if (action)
             return new HxEvent(e, action);
     }

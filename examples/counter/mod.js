@@ -1,7 +1,7 @@
 const countEl = document.querySelector("[count]");
 let count = parseFloat(countEl.textContent);
 
-addEventListener(":click", function (e) {
+addEventListener("#event", function (e) {
 	let { action } = e;
 
 	if ("increment" === action) {
