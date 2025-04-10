@@ -10,8 +10,8 @@ class HxResponseErrorEvent extends Event {
 }
 class HxResponseEvent extends Event {
     #params;
-    constructor(params, eventInit) {
-        super("#response", eventInit);
+    constructor(params) {
+        super("#response", params.eventInit);
         this.#params = params;
     }
     get projectionTarget() {

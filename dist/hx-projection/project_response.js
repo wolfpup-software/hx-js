@@ -23,7 +23,7 @@ class HxProjectEvent extends Event {
 }
 function projectPlacement(projectionTarget, template, projectionStyle) {
     let fragment = template.content.cloneNode(true);
-    let results = [fragment, undefined];
+    let removedFragment;
     if (projectionTarget instanceof Element ||
         projectionTarget instanceof Document ||
         projectionTarget instanceof DocumentFragment) {
@@ -34,18 +34,22 @@ function projectPlacement(projectionTarget, template, projectionStyle) {
             projectionTarget.appendChild(fragment);
         }
         if ("replace_children" === projectionStyle) {
+            // get list of childNodes
+            // add nodes to fragmentQ
             projectionTarget.replaceChildren(fragment);
         }
         if ("remove_children" === projectionStyle) {
+            // get list of childNodes
+            // add nodes to fragmentQ
             projectionTarget.replaceChildren();
         }
         const { parentElement } = projectionTarget;
         if (parentElement) {
             if ("replace" === projectionStyle) {
-                parentElement.replaceChild(fragment, projectionTarget);
+                removedFragment = parentElement.replaceChild(fragment, projectionTarget);
             }
             if ("remove" === projectionStyle) {
-                parentElement.removeChild(projectionTarget);
+                removedFragment = parentElement.removeChild(projectionTarget);
             }
             if ("before" === projectionStyle)
                 parentElement.insertBefore(fragment, projectionTarget);
@@ -53,7 +57,7 @@ function projectPlacement(projectionTarget, template, projectionStyle) {
                 parentElement.insertBefore(fragment, projectionTarget.nextSibling);
         }
     }
-    return results;
+    return [fragment, removedFragment];
 }
 function dispatchHxProjection(e) {
     if (!(e instanceof HxResponseEvent))

@@ -1,42 +1,47 @@
 <!doctype html>
 <html>
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<script type="module" src="../../dist/api/mod.js"></script>
-		<script type="module" src="./mod.js"></script>
+		<meta charset=utf-8 />
+		<meta name=viewport content="width=device-width, initial-scale=1">
+		
+		<script type=module src="../../dist/api/mod.js"></script>
+		<script type=module src="./mod.js"></script>
+
+		<link href="./mod.css" rel="stylesheet">
 	</head>
 	<body>
 		<header></header>
 		<main>
 			<ul>
 				<li>
-					<a href="./bear.html" target="section" :projection="start">
+					<a _href="./bear.html" _target="section" _projection="replace_children" _throttle="_projectionTarget">
 						<button>bear</button>
 					</a>
 				</li>
 				<li>
-					<a href="./crow.html" target="section" :projection="start">
+					<a _href="./crow.html" _target="section" _projection="replace_children" _throttle="_projectionTarget">
 						<button>crow</button>
 					</a>
 				</li>
 				<li>
-					<a href="./fox.html" target="section" :projection="start">
+					<a _href="./fox.html" _target="section" _projection="replace_children" _throttle="_projectionTarget">
 						<button>fox</button>
 					</a>
 				</li>
 				<li>
-					<a href="./wolf.html" target="section" :projection="start">
+					<a _href="./wolf.html" _target="section" _projection="replace_children" _throttle="_projectionTarget">
 						<button>wolf</button>
 					</a>
 				</li>
 				<li>
-					<a href="./reset.html" target="section" :projection="remove_children">
+					<a _href="./reset.html" _target="section" _projection="replace_children" _throttle="_projectionTarget">
 						<button>reset</button>
 					</a>
 				</li>
 			</ul>
-			<section></section>
+			<section>
+				<p>beasts tread softly underfoot.</p>
+			</section>
 		</main>
 		<footer></footer>
 	</body>

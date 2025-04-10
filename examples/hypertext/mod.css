@@ -1,0 +1,12 @@
+[_fetch-state="pending"] {
+	opacity: 0.5;
+	cursor: wait;
+
+	&:is(a, form) {
+		cursor: progress;
+
+		button {
+			cursor: inherit;
+		}
+	}
+}
