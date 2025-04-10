@@ -6,7 +6,7 @@ function getProjectionTarget(e) {
     let { target } = e;
     if (!(target instanceof Element))
         return null;
-    const selector = target.getAttribute("target") || "_currentTarget";
+    const selector = target.getAttribute("_target") || "_currentTarget";
     if ("_document" === selector)
         return document;
     if ("_target" === selector)
@@ -45,15 +45,18 @@ function getTimeoutMs(el) {
 function buildHxRequest(e) {
     let { target } = e;
     if (target instanceof HTMLAnchorElement) {
-        // get _href
-        return new Request(target.href);
+        const href = target.getAttribute("_href");
+        if (href)
+            return new Request(href);
     }
     if (target instanceof HTMLFormElement) {
         // get _action
-        return new Request(target.action, {
-            method: target.getAttribute("method") || "get",
-            body: new FormData(target),
-        });
+        const action = target.getAttribute("_href");
+        if (action)
+            return new Request(action, {
+                method: target.getAttribute("_method") || "get",
+                body: new FormData(target),
+            });
     }
 }
 function getAbortController(target) {
