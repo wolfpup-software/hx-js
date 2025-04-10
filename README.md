@@ -1,6 +1,6 @@
-# hex-js
+# hx-js
 
-(H)ypertext e(x)tension for the browser.
+A (h)ypertext e(x)tension for the browser.
 
 ## About
 
@@ -23,9 +23,9 @@ Hx listens for common interaction events like `click` and `keydown`.
 In the example below, elements with an `:` attribute will dispatch an `HxEvent`.
 
 ```html
-<button @click="increment_count">+1</button>
+<button _click="increment_count">+1</button>
 
-<form @submit="update_form">
+<form _submit="update_form">
 	<input />
 	<input type="submit" />
 </form>
@@ -52,22 +52,22 @@ This makes it relatively easy to send `:click:increment` as an action to update 
 
 ### Requests
 
-If `<a>` and `<form>` elements have a `:projection` attribute, Hx fetch an html fragment and project it into the dom.
+If `<a>` and `<form>` elements have a `_projection` attribute, Hx fetch an html fragment and project it into the dom.
 
 ```html
-<a href="/document/fragment" target="ul" :projection="start"> click me! </a>
+<a href="/document/fragment" target="ul" _projection="start"> click me! </a>
 
 <form
-	action="/post/something"
-	method="post"
-	target="li:last-child"
-	:projection="replace"
+	_action="/post/something"
+	_method="post"
+	_target="li:last-child"
+	_projection="replace"
 >
 	<input type="submit" />
 </form>
 ```
 
-Elements _without_ the `:projection` or attribute behave like normal `<a>` and `<form>` elements.
+Elements _without_ the `_projection` or attribute behave like normal `<a>` and `<form>` elements.
 
 ### Attributes
 
@@ -82,13 +82,13 @@ A `target` value can be:
 - `_currentTarget` -> the `currentTarget` property of an hx event
 - any valid CSS selector.
 
-#### :projection
+#### \_projection
 
 Projection is the process of placing UI fragments into the DOM.
 
-The `:projection` property defines _how_ a `fragment` is projected onto a `document` relative to the `target` element.
+The `_projection` property defines _how_ a `fragment` is projected onto a `document` relative to the `target` element.
 
-A `:projection` properties can have the following values:
+A `_projection` properties can have the following values:
 
 - `none` -> do nothing
 - `before` -> insert a fragment before the target element
@@ -114,9 +114,9 @@ The fallback value is `none`.
 
 If a `:throttle` node is associated with a pending fragment request, the request will be cancelled. A new request will be coupled to the `:throttle` node.
 
-#### :response-state
+#### response-state
 
-The `:response-state` attribute is used to reflect the state of a hypertext request onto the original `<a>` or `<form>` element and the projected target element.
+The `_response-state_` attribute reflectS the state of a hypertext request onto the original `<a>` or `<form>` element and the projected target element.
 
 The following values will be applied:
 
@@ -128,10 +128,10 @@ They directly reflect promise state definitions.
 
 ```html
 <a
-	href="/document/fragment"
-	target="ul"
-	:projection="start"
-	:response-state="pending"
+	_href="/document/fragment"
+	_target="ul"
+	_projection="start"
+	_response-state_="pending"
 >
 	click me!
 </a>

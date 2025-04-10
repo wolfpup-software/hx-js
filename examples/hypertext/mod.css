@@ -1,0 +1,6 @@
+/* do something to signify loading  */
+
+[_request-status="pending"] {
+	opacity: 0.5;
+	cursor: wait;
+}

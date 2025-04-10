@@ -79,7 +79,10 @@ function projectPlacement(
 		const { parentElement } = projectionTarget;
 		if (parentElement) {
 			if ("replace" === projectionStyle) {
-				removedFragment = parentElement.replaceChild(fragment, projectionTarget);
+				removedFragment = parentElement.replaceChild(
+					fragment,
+					projectionTarget,
+				);
 			}
 			if ("remove" === projectionStyle) {
 				removedFragment = parentElement.removeChild(projectionTarget);

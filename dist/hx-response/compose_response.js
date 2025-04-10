@@ -1,6 +1,6 @@
 import { HxResponseEvent, HxResponseErrorEvent } from "./hx_response_event.js";
 function getProjectionStyle(el) {
-    return el.getAttribute("hx-projection");
+    return el.getAttribute("_projection");
 }
 function getProjectionTarget(e) {
     let { target } = e;
@@ -24,7 +24,7 @@ function getThrottleTarget(e, projectionTarget) {
     let { target, currentTarget } = e;
     if (!(target instanceof Element))
         return null;
-    const selector = target.getAttribute("hx-throttle") || "none";
+    const selector = target.getAttribute("_throttle") || "none";
     if ("_projectionTarget" === selector)
         return projectionTarget;
     if ("_document" === selector)
@@ -35,7 +35,7 @@ function getThrottleTarget(e, projectionTarget) {
         return currentTarget;
 }
 function getTimeoutMs(el) {
-    let timeoutMsAttr = el.getAttribute("hx-timeout-ms");
+    let timeoutMsAttr = el.getAttribute("_timeout-ms");
     let timeoutMs = parseFloat(timeoutMsAttr);
     if (Number.isNaN(timeoutMs)) {
         timeoutMs = 5000;
@@ -45,9 +45,11 @@ function getTimeoutMs(el) {
 function buildHxRequest(e) {
     let { target } = e;
     if (target instanceof HTMLAnchorElement) {
+        // get _href
         return new Request(target.href);
     }
     if (target instanceof HTMLFormElement) {
+        // get _action
         return new Request(target.action, {
             method: target.getAttribute("method") || "get",
             body: new FormData(target),
@@ -89,15 +91,15 @@ function fetchAndDispatchResponseEvent(target, request, signal, projectionStyle,
     })
         .then(function (response) {
         if (hangarElement && targetElement) {
-            targetElement.setAttribute("hx-fetch-state", "pending");
-            hangarElement.setAttribute("hx-fetch-state", "pending");
+            targetElement.setAttribute("_fetch-state", "pending");
+            hangarElement.setAttribute("_fetch-state", "pending");
         }
         return Promise.all([response, response.text()]);
     })
         .then(function ([response, body]) {
         if (hangarElement && targetElement) {
-            targetElement.setAttribute("hx-fetch-state", "fulfilled");
-            hangarElement.setAttribute("hx-fetch-state", "fulfilled");
+            targetElement.setAttribute("_fetch-state", "fulfilled");
+            hangarElement.setAttribute("_fetch-state", "fulfilled");
         }
         let template = dangerouslyBuildTemplate(response, body);
         let event = new HxResponseEvent({
@@ -111,8 +113,8 @@ function fetchAndDispatchResponseEvent(target, request, signal, projectionStyle,
     })
         .catch(function (reason) {
         if (hangarElement && targetElement) {
-            targetElement.setAttribute("hx-fetch-state", "rejected");
-            hangarElement.setAttribute("hx-fetch-state", "rejected");
+            targetElement.setAttribute("_fetch-state", "rejected");
+            hangarElement.setAttribute("_fetch-state", "rejected");
         }
         let event = new HxResponseErrorEvent(reason, {
             bubbles: true,

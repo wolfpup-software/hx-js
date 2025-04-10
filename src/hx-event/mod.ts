@@ -27,7 +27,7 @@ class HxEvent extends Event implements HxEvent {
 }
 
 function getAtmark(eventType: string) {
-	return `@${eventType}`;
+	return `_${eventType}_`;
 }
 
 function getHxEvent(
@@ -43,7 +43,6 @@ function getHxEvent(
 
 function dispatchHxEvent(e: Event): void {
 	let type = getAtmark(e.type);
-
 	for (let node of e.composedPath()) {
 		let event = getHxEvent(e, type, node);
 		if (event) node.dispatchEvent(event);

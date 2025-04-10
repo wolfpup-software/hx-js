@@ -2,7 +2,7 @@ export { dispatchHxRequestFromAnchor, dispatchHxRequestOnSubmit };
 // ANCHORS
 function getHxRequestEvent(eventTarget) {
     if (eventTarget instanceof HTMLAnchorElement &&
-        eventTarget.hasAttribute("hx-projection")) {
+        eventTarget.hasAttribute("_projection")) {
         return new Event("#request", {
             bubbles: true,
             composed: true,
@@ -23,7 +23,7 @@ function dispatchHxRequestFromAnchor(e) {
 // FORMS
 function getHxRequestEventFromForm(eventTarget) {
     if (eventTarget instanceof HTMLFormElement &&
-        eventTarget.hasAttribute("hx-projection")) {
+        eventTarget.hasAttribute("_projection")) {
         return new Event("#request", {
             bubbles: true,
             composed: true,

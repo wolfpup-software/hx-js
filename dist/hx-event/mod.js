@@ -15,7 +15,7 @@ class HxEvent extends Event {
     }
 }
 function getAtmark(eventType) {
-    return `@${eventType}`;
+    return `_${eventType}_`;
 }
 function getHxEvent(e, type, node) {
     if (node instanceof Element) {
