@@ -1,7 +1,7 @@
 export { dispatchHxRequestFromAnchor, dispatchHxRequestOnSubmit };
 
 // ANCHORS
-function getHxRequestEvent(eventTarget: EventTarget): Event {
+function getHxRequestEvent(eventTarget: HTMLAnchorElement): Event {
 	if (
 		eventTarget instanceof HTMLAnchorElement &&
 		eventTarget.hasAttribute("_projection")
@@ -15,12 +15,16 @@ function getHxRequestEvent(eventTarget: EventTarget): Event {
 
 function dispatchHxRequestFromAnchor(e: Event): void {
 	for (let eventTarget of e.composedPath()) {
-		let event = getHxRequestEvent(eventTarget);
-		if (event) {
-			// assuming only happends on click to prevent browser fetch
-			e.preventDefault();
-			eventTarget.dispatchEvent(event);
-			return;
+		if (eventTarget instanceof HTMLAnchorElement) {
+			let event = getHxRequestEvent(eventTarget);
+			if (event) {
+				// assuming only happends on click to prevent browser fetch
+				e.preventDefault();
+				// gather all nested?
+				eventTarget.dispatchEvent(event);
+			}
+
+			if (eventTarget.hasAttribute("_stop-propagation")) return;
 		}
 	}
 }
@@ -29,7 +33,7 @@ function dispatchHxRequestFromAnchor(e: Event): void {
 function getHxRequestEventFromForm(eventTarget: EventTarget): Event {
 	if (
 		eventTarget instanceof HTMLFormElement &&
-		eventTarget.hasAttribute("_projection")
+		eventTarget.hasAttribute("_submit")
 	) {
 		return new Event("#request", {
 			bubbles: true,

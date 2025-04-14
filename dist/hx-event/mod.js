@@ -17,19 +17,21 @@ class HxEvent extends Event {
 function getAtmark(eventType) {
     return `_${eventType}_`;
 }
-function getHxEvent(e, type, node) {
-    if (node instanceof Element) {
-        let action = node.getAttribute(type);
-        if (action)
-            return new HxEvent(e, action);
-    }
+function getHxEvent(e, type, el) {
+    let action = el.getAttribute(type);
+    if (action)
+        return new HxEvent(e, action);
 }
 function dispatchHxEvent(e) {
     let type = getAtmark(e.type);
     for (let node of e.composedPath()) {
-        let event = getHxEvent(e, type, node);
-        if (event)
-            node.dispatchEvent(event);
+        if (node instanceof Element) {
+            let event = getHxEvent(e, type, node);
+            if (event)
+                node.dispatchEvent(event);
+            if (node.hasAttribute("_stop-propagation"))
+                return;
+        }
     }
 }
 function getHxEventFromForm(e) {

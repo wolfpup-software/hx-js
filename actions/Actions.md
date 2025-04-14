@@ -14,5 +14,3 @@ Hx listens for common interaction events like `click` and `keydown`.
 	<input type="submit" />
 </form>
 ```
-
-update_form

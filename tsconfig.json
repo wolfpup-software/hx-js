@@ -4,6 +4,7 @@
 		"outDir": "./dist",
 		"lib": ["DOM", "ESNext"],
 		"declaration": true,
+		"strict": true,
 		"module": "ESNext",
 		"target": "ESNext"
 	}
