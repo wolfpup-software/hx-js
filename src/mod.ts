@@ -1,10 +1,10 @@
 // Hx event
-export type { HxEventInterface } from "./hx-event/mod.ts";
+export type { HxEventInterface } from "./hx-action/mod.js";
 export {
 	HxEvent,
 	dispatchHxEvent,
 	dispatchHxFromForm,
-} from "./hx-event/mod.js";
+} from "./hx-action/mod.js";
 
 // Hx Request
 export {

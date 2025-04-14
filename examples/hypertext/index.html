@@ -14,12 +14,14 @@
 		<main>
 			<ul>
 				<li>
-					<a _href="./bear.html" _target="section" _projection="replace_children" _throttle="_projectionTarget">
-						<button>bear</button>
+					<a _href="./bear.html"_target="section" _click="replace_children" _throttle="_projectionTarget" _stop-propagation>
+						<a _href="./bear_preview.html"_target="section" _pointerenter="replace_children" _throttle="_projectionTarget" _pointerover _stop-propagation>
+							<button>bear</button>
+						</a>
 					</a>
 				</li>
 				<li>
-					<a _href="./crow.html" _target="section" _projection="replace_children" _throttle="_projectionTarget">
+					<a _href="./crow.html" _target="section" _projection="replace_children" _throttle="_projectionTarget" _click _stop-propagation>
 						<button>crow</button>
 					</a>
 				</li>

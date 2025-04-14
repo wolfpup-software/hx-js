@@ -1,6 +1,6 @@
-import { dispatchHxEvent, dispatchHxFromForm } from "../hx-event/mod.js";
+import { dispatchHxEvent, dispatchHxFromForm } from "../hx-action/mod.js";
 
-const eventNames = [
+const fallbackEventNames = [
 	"animationcancel",
 	"animationend",
 	"animationstart",
@@ -23,6 +23,8 @@ const eventNames = [
 	"pointerdown",
 	"pointerover",
 	"pointerup",
+	"pointerenter",
+	"pointerleave",
 	"reset",
 	"scroll",
 	"scrollend",
@@ -38,17 +40,22 @@ function isFormEvent(name: string) {
 }
 
 class Hx {
+	#eventNames: string[];
+
+	constructor(eventNames: string[] = fallbackEventNames) {
+		this.#eventNames = eventNames;
+	}
+
 	connect(el: EventTarget) {
 		// interactions
-		for (let name of eventNames) {
+		for (let name of this.#eventNames) {
 			let dispatch = isFormEvent(name) ? dispatchHxFromForm : dispatchHxEvent;
-
 			el.addEventListener(name, dispatch);
 		}
 	}
 
 	disconnect(el: EventTarget) {
-		for (let name of eventNames) {
+		for (let name of this.#eventNames) {
 			let dispatch = isFormEvent(name) ? dispatchHxFromForm : dispatchHxEvent;
 
 			el.removeEventListener(name, dispatch);

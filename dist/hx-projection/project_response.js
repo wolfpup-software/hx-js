@@ -15,7 +15,7 @@ class HxProjectEvent extends Event {
         return this.#params.projectedFragment;
     }
     get disconnectedFragment() {
-        return this.#params.projectedFragment;
+        return this.#params.disconnectedFragment;
     }
     get projectionStyle() {
         return this.#params.projectionStyle;

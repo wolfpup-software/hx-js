@@ -11,7 +11,7 @@ class HxEvent extends Event implements HxEvent {
 	#sourceEvent: Event;
 
 	constructor(e: Event, action: string) {
-		super("#event", { bubbles: true, composed: true });
+		super("#action", { bubbles: true, composed: true });
 
 		this.#action = action;
 		this.#sourceEvent = e;
@@ -26,32 +26,33 @@ class HxEvent extends Event implements HxEvent {
 	}
 }
 
-function getAtmark(eventType: string) {
+function getEventAttr(eventType: string) {
 	return `_${eventType}_`;
 }
 
 function getHxEvent(
 	e: Event,
 	type: string,
-	node: EventTarget,
+	el: Element,
 ): Event | undefined {
-	if (node instanceof Element) {
-		let action = node.getAttribute(type);
-		if (action) return new HxEvent(e, action);
-	}
+	let action = el.getAttribute(type);
+	if (action) return new HxEvent(e, action);
 }
 
 function dispatchHxEvent(e: Event): void {
-	let type = getAtmark(e.type);
+	let type = getEventAttr(e.type);
 	for (let node of e.composedPath()) {
-		let event = getHxEvent(e, type, node);
-		if (event) node.dispatchEvent(event);
+		if (node instanceof Element) {
+			let event = getHxEvent(e, type, node);
+			if (event) node.dispatchEvent(event);
+			if (node.hasAttribute("_stop-propagation_")) return;
+		}
 	}
 }
 
 function getHxEventFromForm(e: Event): Event | undefined {
 	if (e.target instanceof HTMLFormElement) {
-		let type = getAtmark(e.type);
+		let type = getEventAttr(e.type);
 		let action = e.target.getAttribute(type);
 		if (action) return new HxEvent(e, action);
 	}

@@ -1,7 +1,10 @@
 {
-	"name": "hx",
+	"name": "hypertext-extension",
+	"workspaces": [
+		"actions"
+	],
 	"version": "0.1.0",
-	"description": "",
+	"description": "HTML with actions and projections",
 	"type": "module",
 	"main": "dist/mod.js",
 	"scripts": {
