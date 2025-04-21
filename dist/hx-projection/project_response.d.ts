@@ -15,7 +15,7 @@ declare class HxProjectEvent extends Event implements HxProjectEventImpl {
     constructor(params: HxProjectEventParams);
     get projectionTarget(): EventTarget;
     get projectedFragment(): Node;
-    get disconnectedFragment(): Node;
+    get disconnectedFragment(): Node | undefined;
     get projectionStyle(): string;
 }
 declare function dispatchHxProjection(e: Event): void;

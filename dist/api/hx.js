@@ -1,4 +1,4 @@
-import { dispatchHxEvent, dispatchHxFromForm } from "../hx-event/mod.js";
+import { dispatchHxEvent, dispatchHxFromForm } from "../hx-action/mod.js";
 const fallbackEventNames = [
     "animationcancel",
     "animationend",

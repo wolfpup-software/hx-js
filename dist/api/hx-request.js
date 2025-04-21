@@ -1,6 +1,17 @@
 import { dispatchHxRequestFromAnchor, dispatchHxRequestOnSubmit, } from "../hx-request/mod.js";
 import { HxResponse } from "../hx-response/mod.js";
 import { dispatchHxProjection } from "../hx-projection/mod.js";
+const fallbackEventNames = [
+    "change",
+    "click",
+    "dblclick",
+    "focusin",
+    "focusout",
+    "input",
+    "pointerenter",
+    "pointerleave",
+    "submit",
+];
 class HxRequest {
     #el;
     #response;

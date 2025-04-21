@@ -1,14 +1,12 @@
-export type { ActionEventInterface };
-export { dispatchActionEvent, dispatchActionFromForm, ActionEvent };
+export type { HxEventInterface };
+export { dispatchHxEvent, dispatchHxFromForm, HxEvent };
 
-// basic postulations and behaviors that extrapolate into broader logic
-
-interface ActionEventInterface extends Event {
+interface HxEventInterface extends Event {
 	action: string;
 	sourceEvent: Event;
 }
 
-class ActionEvent extends Event implements ActionEvent {
+class HxEvent extends Event implements HxEvent {
 	#action: string;
 	#sourceEvent: Event;
 
@@ -32,37 +30,38 @@ function getEventAttr(eventType: string) {
 	return `_${eventType}_`;
 }
 
-function getActionEvent(
+function getHxEvent(
 	e: Event,
 	type: string,
 	el: Element,
 ): Event | undefined {
 	let action = el.getAttribute(type);
-	if (action) return new ActionEvent(e, action);
+	if (action) return new HxEvent(e, action);
 }
 
-function dispatchActionEvent(e: Event): void {
-	let type = getEventAttr(e.type);
+function dispatchHxEvent(e: Event): void {
+	let kind = getEventAttr(e.type);
 	for (let node of e.composedPath()) {
 		if (node instanceof Element) {
-			let event = getActionEvent(e, type, node);
+			let event = getHxEvent(e, kind, node);
 			if (event) node.dispatchEvent(event);
-			if (node.hasAttribute("_stop-propagation_")) return;
+			if (node.hasAttribute(`${kind}prevent-default_`)) e.preventDefault();
+			if (node.hasAttribute(`${kind}stop-propagation_`)) return;
 		}
 	}
 }
 
-function getActionEventFromForm(e: Event): Event | undefined {
+function getHxEventFromForm(e: Event): Event | undefined {
 	if (e.target instanceof HTMLFormElement) {
 		let type = getEventAttr(e.type);
 		let action = e.target.getAttribute(type);
-		if (action) return new ActionEvent(e, action);
+		if (action) return new HxEvent(e, action);
 	}
 }
 
-function dispatchActionFromForm(e: Event): void {
-	let event = getActionEventFromForm(e);
-	if (event) {
+function dispatchHxFromForm(e: Event): void {
+	let event = getHxEventFromForm(e);
+	if (e.target && event) {
 		e.preventDefault();
 		e.target.dispatchEvent(event);
 	}

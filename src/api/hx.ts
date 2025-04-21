@@ -57,7 +57,6 @@ class Hx {
 	disconnect(el: EventTarget) {
 		for (let name of this.#eventNames) {
 			let dispatch = isFormEvent(name) ? dispatchHxFromForm : dispatchHxEvent;
-
 			el.removeEventListener(name, dispatch);
 		}
 	}

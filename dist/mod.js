@@ -1,4 +1,4 @@
-export { HxEvent, dispatchHxEvent, dispatchHxFromForm, } from "./hx-event/mod.js";
+export { HxEvent, dispatchHxEvent, dispatchHxFromForm, } from "./hx-action/mod.js";
 // Hx Request
 export { dispatchHxRequestFromAnchor, dispatchHxRequestOnSubmit, } from "./hx-request/mod.js";
 export { HxResponseEvent, HxResponse } from "./hx-response/mod.js";

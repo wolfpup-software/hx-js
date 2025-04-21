@@ -22,7 +22,7 @@ declare class HxResponseErrorEvent extends Event implements HxResponseErrorEvent
 declare class HxResponseEvent extends Event implements HxResponseEventInterface {
     #private;
     constructor(params: HxResponseEventParams);
-    get projectionTarget(): EventTarget;
+    get projectionTarget(): EventTarget | null;
     get projectionStyle(): string;
     get response(): Response;
     get template(): HTMLTemplateElement;

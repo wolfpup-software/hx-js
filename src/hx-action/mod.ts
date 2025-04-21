@@ -40,12 +40,13 @@ function getHxEvent(
 }
 
 function dispatchHxEvent(e: Event): void {
-	let type = getEventAttr(e.type);
+	let kind = getEventAttr(e.type);
 	for (let node of e.composedPath()) {
 		if (node instanceof Element) {
-			let event = getHxEvent(e, type, node);
+			let event = getHxEvent(e, kind, node);
 			if (event) node.dispatchEvent(event);
-			if (node.hasAttribute("_stop-propagation_")) return;
+			if (node.hasAttribute(`${kind}prevent-default_`)) e.preventDefault();
+			if (node.hasAttribute(`${kind}stop-propagation_`)) return;
 		}
 	}
 }
@@ -60,7 +61,7 @@ function getHxEventFromForm(e: Event): Event | undefined {
 
 function dispatchHxFromForm(e: Event): void {
 	let event = getHxEventFromForm(e);
-	if (event) {
+	if (e.target && event) {
 		e.preventDefault();
 		e.target.dispatchEvent(event);
 	}

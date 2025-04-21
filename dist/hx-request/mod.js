@@ -11,19 +11,23 @@ function getHxRequestEvent(eventTarget) {
 }
 function dispatchHxRequestFromAnchor(e) {
     for (let eventTarget of e.composedPath()) {
-        let event = getHxRequestEvent(eventTarget);
-        if (event) {
-            // assuming only happends on click to prevent browser fetch
-            e.preventDefault();
-            eventTarget.dispatchEvent(event);
-            return;
+        if (eventTarget instanceof HTMLAnchorElement) {
+            let event = getHxRequestEvent(eventTarget);
+            if (event) {
+                // assuming only happends on click to prevent browser fetch
+                e.preventDefault();
+                // gather all nested?
+                eventTarget.dispatchEvent(event);
+            }
+            if (eventTarget.hasAttribute("_stop-propagation"))
+                return;
         }
     }
 }
 // FORMS
 function getHxRequestEventFromForm(eventTarget) {
     if (eventTarget instanceof HTMLFormElement &&
-        eventTarget.hasAttribute("_projection")) {
+        eventTarget.hasAttribute("_submit")) {
         return new Event("#request", {
             bubbles: true,
             composed: true,
