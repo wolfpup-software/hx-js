@@ -1,6 +1,5 @@
 export type { HxActionEventInterface };
-export { dispatchHxAction, HxActionEvent, HxActions};
-
+export { dispatchHxAction, HxActionEvent, HxActions };
 
 interface HxActionEventInterface extends Event {
 	action: string;
@@ -52,7 +51,11 @@ function getEventAttr(eventType: string) {
 	return `_${eventType}_`;
 }
 
-function getHxActionEvent(e: Event, type: string, el: Element): Event | undefined {
+function getHxActionEvent(
+	e: Event,
+	type: string,
+	el: Element,
+): Event | undefined {
 	let action = el.getAttribute(type);
 	if (action) return new HxActionEvent(e, action);
 }
