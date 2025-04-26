@@ -1,4 +1,4 @@
-import { HxResponseEvent } from "../hx-response/mod.js";
+import { HxResponseEvent } from "../src/hx-response/mod.js";
 
 interface HxProjectEventImpl {
 	projectionTarget: EventTarget;

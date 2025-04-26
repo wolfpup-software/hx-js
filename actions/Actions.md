@@ -16,3 +16,21 @@ Hx can listen for events like `click` and `keydown`.
 	<input type="submit" />
 </form>
 ```
+
+## Composed Paths
+
+```html
+<section _click_="do_something_else!">
+	<button _click_="increment"></button>
+	<button _click_="decrement"></button>
+</section>
+```
+
+```html
+<section _submit_="update_forms">
+	<form _submit_="submit the form!">
+		<input type="checkbox" _input_="increment"></button>
+		<button type="submit" _click_="decrement"></button>
+	</form>
+</section>
+```

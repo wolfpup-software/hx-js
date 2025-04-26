@@ -10,6 +10,8 @@ npm install https://github.com/wolfpup-software/hx-js
 
 ## Action Events
 
+An `#action` event occurs from an event and an `_event_` attribute.
+
 ## Projection Events
 
 ## License

@@ -1,5 +1,5 @@
 export type { HxEventInterface };
-export { dispatchHxEvent, dispatchHxFromForm, HxEvent };
+export { dispatchHxAction, HxEvent };
 interface HxEventInterface extends Event {
     action: string;
     sourceEvent: Event;
@@ -10,5 +10,4 @@ declare class HxEvent extends Event implements HxEvent {
     get action(): string;
     get sourceEvent(): Event;
 }
-declare function dispatchHxEvent(e: Event): void;
-declare function dispatchHxFromForm(e: Event): void;
+declare function dispatchHxAction(e: Event): void;

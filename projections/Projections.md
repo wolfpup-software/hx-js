@@ -1,11 +1,15 @@
 ### Requests
 
-If `<a>` and `<form>` elements have a `_projection` attribute, Hx fetch an html fragment and project it into the dom.
+If `<a>` and `<form>` elements have a `_eventa` attribute, Hx fetch an html fragment and project it into the dom.
 
 ```html
 <a _href="/document/fragment" _target="ul" _projection="start"> click me! </a>
 
-<a _href="/mouseover/fragment" _target="[preview]" _pointerenter="replace_children">
+<a
+	_href="/mouseover/fragment"
+	_target="[preview]"
+	_pointerenter="replace_children"
+>
 	<form
 		_action="/post/something"
 		_method="post"
@@ -14,7 +18,8 @@ If `<a>` and `<form>` elements have a `_projection` attribute, Hx fetch an html 
 	>
 		<input type="submit" />
 	</form>
-<a>
+	<a></a
+></a>
 ```
 
 Elements _without_ the `_projection` or attribute behave like normal `<a>` and `<form>` elements.

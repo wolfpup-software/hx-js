@@ -122,13 +122,16 @@ function fetchAndDispatchResponseEvent(
 	})
 		.then(function (response) {
 			if (hangarElement) hangarElement.setAttribute("_fetch-state", "pending");
-			if (targetElement) targetElement.setAttribute("_projection-state", "pending");
+			if (targetElement)
+				targetElement.setAttribute("_projection-state", "pending");
 
 			return Promise.all([response, response.text()]);
 		})
 		.then(function ([response, body]) {
-			if (hangarElement) hangarElement.setAttribute("_fetch-state", "fulfilled");
-			if (targetElement) targetElement.setAttribute("_projection-state", "fulfilled");
+			if (hangarElement)
+				hangarElement.setAttribute("_fetch-state", "fulfilled");
+			if (targetElement)
+				targetElement.setAttribute("_projection-state", "fulfilled");
 
 			let template = dangerouslyBuildTemplate(response, body);
 
@@ -144,7 +147,8 @@ function fetchAndDispatchResponseEvent(
 		})
 		.catch(function (reason: any) {
 			if (hangarElement) hangarElement.setAttribute("_fetch-state", "rejected");
-			if (targetElement) targetElement.setAttribute("_projection-state", "rejected");
+			if (targetElement)
+				targetElement.setAttribute("_projection-state", "rejected");
 
 			let event = new HxResponseErrorEvent(reason, {
 				bubbles: true,

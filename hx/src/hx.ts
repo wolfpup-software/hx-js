@@ -1,4 +1,7 @@
-import { dispatchHxEvent, dispatchHxFromForm } from "../hx-action/mod.js";
+import {
+	dispatchHxAction,
+	dispatchHxActionFromForm,
+} from "../hx-action/mod.js";
 
 const fallbackEventNames = [
 	"animationcancel",
@@ -49,14 +52,18 @@ class Hx {
 	connect(el: EventTarget) {
 		// interactions
 		for (let name of this.#eventNames) {
-			let dispatch = isFormEvent(name) ? dispatchHxFromForm : dispatchHxEvent;
+			let dispatch = isFormEvent(name)
+				? dispatchHxActionFromForm
+				: dispatchHxAction;
 			el.addEventListener(name, dispatch);
 		}
 	}
 
 	disconnect(el: EventTarget) {
 		for (let name of this.#eventNames) {
-			let dispatch = isFormEvent(name) ? dispatchHxFromForm : dispatchHxEvent;
+			let dispatch = isFormEvent(name)
+				? dispatchHxActionFromForm
+				: dispatchHxAction;
 			el.removeEventListener(name, dispatch);
 		}
 	}

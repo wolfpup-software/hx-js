@@ -1,4 +1,4 @@
-export { dispatchHxEvent, dispatchHxFromForm, HxEvent };
+export { dispatchHxAction, HxEvent };
 class HxEvent extends Event {
     #action;
     #sourceEvent;
@@ -22,7 +22,7 @@ function getHxEvent(e, type, el) {
     if (action)
         return new HxEvent(e, action);
 }
-function dispatchHxEvent(e) {
+function dispatchHxAction(e) {
     let kind = getEventAttr(e.type);
     for (let node of e.composedPath()) {
         if (node instanceof Element) {
@@ -34,20 +34,5 @@ function dispatchHxEvent(e) {
             if (node.hasAttribute(`${kind}stop-propagation_`))
                 return;
         }
-    }
-}
-function getHxEventFromForm(e) {
-    if (e.target instanceof HTMLFormElement) {
-        let type = getEventAttr(e.type);
-        let action = e.target.getAttribute(type);
-        if (action)
-            return new HxEvent(e, action);
-    }
-}
-function dispatchHxFromForm(e) {
-    let event = getHxEventFromForm(e);
-    if (e.target && event) {
-        e.preventDefault();
-        e.target.dispatchEvent(event);
     }
 }

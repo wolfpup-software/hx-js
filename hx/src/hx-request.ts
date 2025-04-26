@@ -7,18 +7,6 @@ import { HxResponse } from "../hx-response/mod.js";
 
 import { dispatchHxProjection } from "../hx-projection/mod.js";
 
-const fallbackEventNames = [
-	"change",
-	"click",
-	"dblclick",
-	"focusin",
-	"focusout",
-	"input",
-	"pointerenter",
-	"pointerleave",
-	"submit",
-];
-
 class HxRequest {
 	#el: Document | ShadowRoot;
 	#response: HxResponse;
@@ -41,6 +29,7 @@ class HxRequest {
 	disconnect() {
 		this.#el.removeEventListener("click", dispatchHxRequestFromAnchor);
 		this.#el.removeEventListener("submit", dispatchHxRequestOnSubmit);
+
 		this.#el.removeEventListener("#request", this.#response.onHxRequest);
 		this.#el.removeEventListener("#response", dispatchHxProjection);
 	}
