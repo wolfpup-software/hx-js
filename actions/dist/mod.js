@@ -1,5 +1,5 @@
-export { dispatchHxAction, HxEvent };
-class HxEvent extends Event {
+export { dispatchHxAction, HxActionEvent, HxActions };
+class HxActionEvent extends Event {
     #action;
     #sourceEvent;
     constructor(e, action) {
@@ -14,19 +14,36 @@ class HxEvent extends Event {
         return this.#sourceEvent;
     }
 }
+class HxActions {
+    #eventNames;
+    constructor(eventNames) {
+        this.#eventNames = eventNames;
+    }
+    connect(el) {
+        // interactions
+        for (let name of this.#eventNames) {
+            el.addEventListener(name, dispatchHxAction);
+        }
+    }
+    disconnect(el) {
+        for (let name of this.#eventNames) {
+            el.removeEventListener(name, dispatchHxAction);
+        }
+    }
+}
 function getEventAttr(eventType) {
     return `_${eventType}_`;
 }
-function getHxEvent(e, type, el) {
+function getHxActionEvent(e, type, el) {
     let action = el.getAttribute(type);
     if (action)
-        return new HxEvent(e, action);
+        return new HxActionEvent(e, action);
 }
 function dispatchHxAction(e) {
     let kind = getEventAttr(e.type);
     for (let node of e.composedPath()) {
         if (node instanceof Element) {
-            let event = getHxEvent(e, kind, node);
+            let event = getHxActionEvent(e, kind, node);
             if (event)
                 node.dispatchEvent(event);
             if (node.hasAttribute(`${kind}prevent-default_`))

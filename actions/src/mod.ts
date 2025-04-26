@@ -1,12 +1,13 @@
-export type { HxEventInterface };
-export { dispatchHxAction, HxEvent };
+export type { HxActionEventInterface };
+export { dispatchHxAction, HxActionEvent, HxActions};
 
-interface HxEventInterface extends Event {
+
+interface HxActionEventInterface extends Event {
 	action: string;
 	sourceEvent: Event;
 }
 
-class HxEvent extends Event implements HxEvent {
+class HxActionEvent extends Event implements HxActionEvent {
 	#action: string;
 	#sourceEvent: Event;
 
@@ -26,20 +27,41 @@ class HxEvent extends Event implements HxEvent {
 	}
 }
 
+class HxActions {
+	#eventNames: string[];
+
+	constructor(eventNames: string[]) {
+		this.#eventNames = eventNames;
+	}
+
+	connect(el: EventTarget) {
+		// interactions
+		for (let name of this.#eventNames) {
+			el.addEventListener(name, dispatchHxAction);
+		}
+	}
+
+	disconnect(el: EventTarget) {
+		for (let name of this.#eventNames) {
+			el.removeEventListener(name, dispatchHxAction);
+		}
+	}
+}
+
 function getEventAttr(eventType: string) {
 	return `_${eventType}_`;
 }
 
-function getHxEvent(e: Event, type: string, el: Element): Event | undefined {
+function getHxActionEvent(e: Event, type: string, el: Element): Event | undefined {
 	let action = el.getAttribute(type);
-	if (action) return new HxEvent(e, action);
+	if (action) return new HxActionEvent(e, action);
 }
 
 function dispatchHxAction(e: Event): void {
 	let kind = getEventAttr(e.type);
 	for (let node of e.composedPath()) {
 		if (node instanceof Element) {
-			let event = getHxEvent(e, kind, node);
+			let event = getHxActionEvent(e, kind, node);
 			if (event) node.dispatchEvent(event);
 			if (node.hasAttribute(`${kind}prevent-default_`)) e.preventDefault();
 			if (node.hasAttribute(`${kind}stop-propagation_`)) return;
