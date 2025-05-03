@@ -34,7 +34,6 @@ class HxActions {
 	}
 
 	connect(el: EventTarget) {
-		// interactions
 		for (let name of this.#eventNames) {
 			el.addEventListener(name, dispatchHxAction);
 		}
@@ -48,7 +47,7 @@ class HxActions {
 }
 
 function getEventAttr(eventType: string) {
-	return `_${eventType}_`;
+	return `_${eventType}`;
 }
 
 function getHxActionEvent(
@@ -66,8 +65,8 @@ function dispatchHxAction(e: Event): void {
 		if (node instanceof Element) {
 			let event = getHxActionEvent(e, kind, node);
 			if (event) node.dispatchEvent(event);
-			if (node.hasAttribute(`${kind}prevent-default_`)) e.preventDefault();
-			if (node.hasAttribute(`${kind}stop-propagation_`)) return;
+			if (node.hasAttribute(`${kind}_prevent-default`)) e.preventDefault();
+			if (node.hasAttribute(`${kind}_stop-propagation`)) return;
 		}
 	}
 }
