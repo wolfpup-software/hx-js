@@ -1,11 +1,14 @@
 {
-	"name": "hx",
+	"name": "hypertext-extension",
+	"workspaces": [
+		"actions"
+	],
 	"version": "0.1.0",
-	"description": "",
+	"description": "HTML with actions and projections",
 	"type": "module",
 	"main": "dist/mod.js",
 	"scripts": {
-		"build": "npx tsc --build",
+		"build": "npm run --workspaces build",
 		"format": "npx prettier ./ --write"
 	},
 	"devDependencies": {
