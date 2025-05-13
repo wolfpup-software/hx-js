@@ -2,7 +2,6 @@
 
 Action events allow developers to interact with local javascript through html.
 
-
 ## Syntax
 
 Actions events are declared by adding an attribute with the following syntax: `_event_="action"`.
