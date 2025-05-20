@@ -10,11 +10,11 @@ class HxActionEvent extends Event implements HxActionEvent {
 	#action: string;
 	#sourceEvent: Event;
 
-	constructor(e: Event, action: string) {
+	constructor(action: string, sourceEvent: Event) {
 		super("#action", { bubbles: true, composed: true });
 
 		this.#action = action;
-		this.#sourceEvent = e;
+		this.#sourceEvent = sourceEvent;
 	}
 
 	get action(): string {
@@ -56,7 +56,7 @@ function getHxActionEvent(
 	el: Element,
 ): Event | undefined {
 	let action = el.getAttribute(type);
-	if (action) return new HxActionEvent(e, action);
+	if (action) return new HxActionEvent(action, e);
 }
 
 function dispatchHxAction(e: Event): void {
