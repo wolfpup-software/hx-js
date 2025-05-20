@@ -1,6 +1,6 @@
 {
 	"name": "hx-action",
-	"description": "",
+	"description": "declarative actions in html",
 	"type": "module",
 	"main": "dist/mod.js",
 	"scripts": {
