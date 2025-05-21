@@ -51,3 +51,29 @@ function dispatchHxRequestOnSubmit(e: Event): void {
 		return;
 	}
 }
+
+function getEventAttr(eventType: string) {
+	return `_${eventType}`;
+}
+
+function getHxRequestEvent(
+	e: Event,
+	type: string,
+	el: Element,
+): Event | undefined {
+	let action = el.getAttribute(type);
+	
+	if (action) return new HxRequestEvent(action, e);
+}
+
+function dispatchHxRequest(e: Event): void {
+	let kind = getEventAttr(e.type);
+	for (let node of e.composedPath()) {
+		if (node instanceof Element) {
+			let event = getHxRequestEvent(e, kind, node);
+			if (event) node.dispatchEvent(event);
+			if (node.hasAttribute(`${kind}_prevent-default`)) e.preventDefault();
+			if (node.hasAttribute(`${kind}_stop-propagation`)) return;
+		}
+	}
+}
