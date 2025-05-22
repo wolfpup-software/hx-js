@@ -98,6 +98,8 @@ function projectPlacement(
 }
 
 function dispatchHxProjection(e: Event): void {
+	if (e.defaultPrevented) return;
+
 	if (!(e instanceof HxResponseEvent)) return;
 
 	let { projectionStyle, projectionTarget, template } = e;

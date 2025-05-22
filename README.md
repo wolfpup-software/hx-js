@@ -1,6 +1,6 @@
-# hx-js
+# nightowl-js
 
-A (h)ypertext e(x)tension for the browser.
+A hypertext extension for the browser.
 
 ## Install
 
@@ -8,11 +8,11 @@ A (h)ypertext e(x)tension for the browser.
 npm install https://github.com/wolfpup-software/hx-js
 ```
 
-## Action Events
+## Actions
 
-An `#action` event occurs from an event and an `_event_` attribute.
+[Action events] let developers declaratively .
 
-## Projection Events
+## Projections
 
 ## License
 

@@ -162,6 +162,8 @@ function composeResponse(
 	throttler: WeakMap<EventTarget, AbortController>,
 	e: Event,
 ) {
+	if (e.defaultPrevented) return;
+	
 	let { target } = e;
 	if (!(target instanceof Element)) return;
 
