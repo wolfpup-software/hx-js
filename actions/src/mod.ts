@@ -64,8 +64,8 @@ function dispatchHxAction(e: Event): void {
 	for (let node of e.composedPath()) {
 		if (node instanceof Element) {
 			let event = getHxActionEvent(e, kind, node);
-			if (event) node.dispatchEvent(event);
 			if (node.hasAttribute(`${kind}_prevent-default`)) e.preventDefault();
+			if (event) node.dispatchEvent(event);
 			if (node.hasAttribute(`${kind}_stop-propagation`)) return;
 		}
 	}
